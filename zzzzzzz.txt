@@ -1,0 +1,66 @@
+BookHunter/
+├── assets/
+│   ├── images/
+│   │   ├── book_cover_1.jpg
+│   │   └── ...
+│   ├── icons/
+│   │   ├── search.png
+│   │   ├── cart.png
+│   │   └── ...
+│   └── fonts/
+│
+├── components/
+│   ├── BookCard.js          # Thẻ hiển thị thông tin một cuốn sách
+│   ├── Header.js            # Header chung của ứng dụng
+│   ├── Loading.js           # Component hiển thị trạng thái tải
+│   ├── ThemeToggle.js       # Nút/Công tắc chuyển đổi theme
+│   ├── FontSizeSelector.js   # Selector thay đổi font size
+│   └── ...
+│
+├── constants/
+│   ├── colors.js            # Định nghĩa các màu sắc và kích thước chữ
+│   └── api.js               # Cấu hình API (có thể dùng cho Firebase hoặc API backend)
+│
+├── contexts/
+│   ├── ThemeContext.js      # Chứa ThemeContext
+│
+├── firebase/
+│   └── firebase.js          # Khởi tạo Firebase
+│
+├── navigation/
+│   ├── AppNavigator.js      # Điều hướng chính của ứng dụng
+│   └── AuthNavigator.js     # Điều hướng cho màn hình xác thực (nếu có)
+│
+├── screens/
+│   ├── HomeScreen.js        # Màn hình trang chủ (hiển thị danh sách sách)
+│   ├── BookDetailScreen.js   # Màn hình chi tiết sách
+│   ├── CartScreen.js        # Màn hình giỏ hàng
+│   ├── SearchScreen.js      # Màn hình tìm kiếm
+│   ├── ProfileScreen.js     # Màn hình thông tin người dùng
+│   ├── LoginScreen.js       # Màn hình đăng nhập (nếu có)
+│   ├── SignUpScreen.js      # Màn hình đăng ký (nếu có)
+│   └── SettingsScreen.js    # Màn hình cài đặt
+│
+├── services/
+│   ├── bookService.js       # Gọi API liên quan đến sách
+│   └── authService.js       # Gọi API liên quan đến xác thực (nếu có)
+│
+├── store/
+│   ├── actions/
+│   │   ├── cartActions.js
+│   │   └── ...
+│   ├── reducers/
+│   │   ├── cartReducer.js
+│   │   └── ...
+│   ├── index.js
+│   └── ...
+│
+├── utils/
+│   ├── helpers.js
+│   └── validation.js
+│
+├── App.js
+├── app.json
+├── babel.config.js
+├── package.json
+└── yarn.lock
