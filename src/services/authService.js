@@ -1,16 +1,13 @@
 // services/authService.js
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendEmailVerification,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { db } from "../api/firebase";
+import { db, auth } from "../api/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-
-const auth = getAuth();
 
 const authService = {
   async register(email, password) {
@@ -33,10 +30,8 @@ const authService = {
         address: "",
         created_at: new Date(),
       });
-      console.error("Error registering user: ", error);
       return user;
     } catch (error) {
-      console.error("Error registering user: ", error);
       throw error;
     }
   },

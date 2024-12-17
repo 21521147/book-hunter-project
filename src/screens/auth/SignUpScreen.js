@@ -38,8 +38,8 @@ const SignUpScreen = ({ navigation }) => {
     setLoading(true); // Bắt đầu trạng thái loading
 
     try {
-      const result = await authService.register(email, password);
-      console.log("Đăng ký thành công:", result.user);
+      await authService.register(email, password);
+      console.log("Đăng ký thành công!");
 
       Alert.alert(
         "Thành công",
@@ -93,7 +93,7 @@ const SignUpScreen = ({ navigation }) => {
       <Text
         style={[
           styles.title,
-          { color: colors.primary, fontSize: fontSizes.xLarge },
+          { color: colors.primary, fontSize: fontSizes.xxLarge },
         ]}
       >
         Đăng ký
@@ -160,7 +160,7 @@ const SignUpScreen = ({ navigation }) => {
           Bạn đã có tài khoản?
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate("SignIn")}>
-          <Text style={{ color: colors.primary }}>Đăng nhập</Text>
+          <Text style={{ color: colors.primary, marginLeft: 10 }}>Đăng nhập</Text>
         </TouchableOpacity>
       </View>
     </View>
