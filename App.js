@@ -1,15 +1,20 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import BottomMain from "./src/navigations/BottomMain";
+import StackNav from "./src/navigations/StackNav";
 import { ThemeProvider } from "./src/contexts/ThemeContext";
-
+import AuthContextProvider from "./src/contexts/AuthContext";
+import UserContextProvider from "./src/contexts/UserContext";
 const App = () => {
   return (
-    <ThemeProvider>
-      <NavigationContainer>
-        <BottomMain />
-      </NavigationContainer>
-    </ThemeProvider>
+    <AuthContextProvider>
+      <UserContextProvider>
+        <ThemeProvider>
+          <NavigationContainer>
+            <StackNav />
+          </NavigationContainer>
+        </ThemeProvider>
+      </UserContextProvider>
+    </AuthContextProvider>
   );
 };
 
