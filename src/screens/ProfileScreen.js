@@ -12,6 +12,7 @@ import Icon1 from "react-native-vector-icons/FontAwesome5";
 import { ThemeContext } from "../contexts/ThemeContext";
 import ToggleMode from "../components/ToggleMode";
 import IconBox from "../components/IconBox";
+import Loading from "../components/Loading";
 
 const ProfileScreen = ({ navigation }) => {
   const { user, logout } = useContext(AuthContext);
@@ -22,11 +23,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   if (!user) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   const createdAt = user.created_at.toDate().toLocaleDateString();
@@ -62,7 +59,7 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.line, {borderColor: colors.text}]}/>
+      <View style={[styles.line, { borderColor: colors.text }]} />
 
       <View style={styles.section}>
         <Text
@@ -109,7 +106,7 @@ const ProfileScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      <View style={[styles.line, {borderColor: colors.text}]}/>
+      <View style={[styles.line, { borderColor: colors.text }]} />
 
       <View
         style={{
@@ -132,7 +129,7 @@ const ProfileScreen = ({ navigation }) => {
         />
       </View>
 
-      <View style={[styles.line, {borderColor: colors.text}]}/>
+      <View style={[styles.line, { borderColor: colors.text }]} />
 
       <View style={styles.section2}>
         <Text
@@ -160,10 +157,6 @@ const ProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-  },
   header: {
     marginTop: 30,
     width: "95%",

@@ -1,18 +1,22 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
 import Slider from "../components/Slider";
+import GenreSlider from "../components/GenreSlider";
+import FlatlistByGenre from "../components/book/FlatlistByGenre";
+import FlatlistByRatingAvg from "../components/book/FlatlistByRatingAvg";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 const HomeScreen = ({ navigation }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
+  const [selectedGenre, setSelectedGenre] = useState("Tất cả");
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
-      <Image
-        source={require("../../assets/playstore-icon.png")}
-        style={{width: 80, height: 80}}
-      />
+        <Image
+          source={require("../../assets/playstore-icon.png")}
+          style={{ width: 80, height: 80 }}
+        />
         <Text
           style={[
             styles.headerText,
@@ -23,9 +27,24 @@ const HomeScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      <Slider navigation={navigation}/>
+      <ScrollView>
+        <Slider navigation={navigation} />
 
-      <ScrollView contentContainerStyle={styles.content}></ScrollView>
+        <View style={styles.section}>
+          <GenreSlider
+            selectedGenre={selectedGenre}
+            setSelectedGenre={setSelectedGenre}
+          />
+          <FlatlistByGenre
+            selectedGenre={selectedGenre}
+            navigation={navigation}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <FlatlistByRatingAvg navigation={navigation} />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -37,24 +56,16 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    marginVertical: 5,
+    marginTop: 5,
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 1,
+    marginBottom: 10,
   },
   headerText: {
     fontWeight: "900",
   },
-  content: {
-    flexGrow: 1,
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+  section: {},
 });
 
 export default HomeScreen;

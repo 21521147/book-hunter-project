@@ -1,3 +1,5 @@
+import { shadow } from "react-native-paper";
+
 export const lightTheme = {
   primary: "#0A51B0",
   secondary: "#6c757d",
@@ -8,7 +10,8 @@ export const lightTheme = {
   border: "#dee2e6",
   error: "#dc3545",
   success: "#28a745",
-  icon: "#000"
+  icon: "#000",
+  shadow: "#000"
 };
 
 export const darkTheme = {
@@ -21,7 +24,8 @@ export const darkTheme = {
   border: "#424242",
   error: "#f56565",
   success: "#38b000",
-  icon: "#f8f9fa"
+  icon: "#f8f9fa",
+  shadow: "#fff"
 };
 
 export const fontSizes = {

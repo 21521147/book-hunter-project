@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   View,
   Image,
@@ -8,37 +8,54 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFetchEvents } from "../services/eventService";
+import { ThemeContext } from "../contexts/ThemeContext";
+import Loading from "./Loading";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
 const Slider = ({ navigation }) => {
-  const { events, loading } = useFetchEvents();
+  const { events: fetchedEvents, loading } = useFetchEvents();
+  const [events, setEvents] = useState([]);
   const scrollViewRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(1); // Start from the first "real" slide
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { colors } = useContext(ThemeContext);
 
   useEffect(() => {
-    if (events.length > 0) {
-      const autoScroll = setInterval(() => {
-        handleAutoScroll();
+    const fetchEvents = async () => {
+      try {
+        const cachedEvents = await AsyncStorage.getItem("events");
+        if (cachedEvents) {
+          setEvents(JSON.parse(cachedEvents));
+        } else if (fetchedEvents.length > 0) {
+          setEvents(fetchedEvents);
+          await AsyncStorage.setItem("events", JSON.stringify(fetchedEvents));
+        }
+      } catch (error) {
+        console.error("Error fetching events: ", error);
+      }
+    };
+
+    fetchEvents();
+  }, [fetchedEvents]);
+
+  useEffect(() => {
+    if (scrollViewRef.current && events.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % events.length;
+          scrollViewRef.current.scrollTo({
+            x: nextIndex * viewportWidth,
+            animated: true,
+          });
+          return nextIndex;
+        });
       }, 3000); // Change slide every 3 seconds
 
-      return () => clearInterval(autoScroll);
+      return () => clearInterval(interval);
     }
   }, [events]);
-
-  const handleAutoScroll = () => {
-    if (scrollViewRef.current) {
-      setCurrentIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1;
-        scrollViewRef.current.scrollTo({
-          x: nextIndex * viewportWidth,
-          animated: true,
-        });
-        return nextIndex;
-      });
-    }
-  };
 
   const handleMomentumScrollEnd = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -61,9 +78,7 @@ const Slider = ({ navigation }) => {
 
   if (loading || events.length === 0) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
-      </View>
+      <Loading />
     );
   }
 
@@ -71,7 +86,7 @@ const Slider = ({ navigation }) => {
   const loopedEvents = [
     { ...events[events.length - 1] }, // Clone of the last image
     ...events,
-    { ...events[0] }, // Clone of the first image
+    { ...events[0] }, 
   ];
 
   return (
@@ -106,7 +121,7 @@ const Slider = ({ navigation }) => {
               key={index}
               style={[
                 styles.dot,
-                isActive ? styles.activeDot : styles.inactiveDot,
+                isActive ? { backgroundColor: colors.primary } : styles.inactiveDot,
               ]}
             />
           );
@@ -117,10 +132,6 @@ const Slider = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
   slide: {
     width: viewportWidth,
     justifyContent: "center",
@@ -137,20 +148,16 @@ const styles = StyleSheet.create({
   pagination: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
     marginTop: 10,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  activeDot: {
-    backgroundColor: "#007bff",
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
   },
   inactiveDot: {
-    backgroundColor: "#d3d3d3",
+    backgroundColor: "#ccc",
   },
 });
 
