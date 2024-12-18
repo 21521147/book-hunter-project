@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { View, Text, Button, ScrollView, StyleSheet } from "react-native";
+import { View, Text, Image, ScrollView, StyleSheet } from "react-native";
 import Slider from "../components/Slider";
 import { ThemeContext } from "../contexts/ThemeContext";
 
@@ -9,6 +9,10 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
+      <Image
+        source={require("../../assets/playstore-icon.png")}
+        style={{width: 80, height: 80}}
+      />
         <Text
           style={[
             styles.headerText,
@@ -32,9 +36,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    marginVertical: 20,
-    padding: 10,
+    flexDirection: "row",
+    marginVertical: 5,
     alignItems: "center",
+    justifyContent: "center",
     borderBottomWidth: 1,
   },
   headerText: {
