@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -21,13 +22,13 @@ const authService = {
       await sendEmailVerification(user);
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
-        name: "",
+        name: user.email,
         email: user.email,
         cart: [],
         completedOrders: [],
         savedItems: [],
-        phoneNumber: "",
-        address: "",
+        phoneNumber: "Chưa có",
+        address: "Chưa có",
         created_at: new Date(),
       });
       return user;
@@ -45,7 +46,14 @@ const authService = {
       );
       return userCredential.user;
     } catch (error) {
-      console.error("Error login user: ", error);
+      throw error;
+    }
+  },
+
+  async resetpassword(email) {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
       throw error;
     }
   },
@@ -77,12 +85,13 @@ const authService = {
 
   onAuthStateChange(callback) {
     return onAuthStateChanged(auth, (user) => {
-      callback(user);
+      if (user) {
+        callback(user);
+      } else {
+        callback(null);
+      }
     });
   },
-  // Thêm các hàm liên quan đến auth khác
-  // - resetPassword
-  // - socialLogin
 };
 
 export default authService;
