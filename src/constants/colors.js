@@ -30,4 +30,5 @@ export const fontSizes = {
   large: 20,
   xLarge: 24,
   xxLarge: 28,
+  xxxLarge: 32
 };

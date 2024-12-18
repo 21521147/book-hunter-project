@@ -4,6 +4,8 @@ import BottomMain from "./BottomMain";
 import ProfileScreen from "../screens/ProfileScreen";
 import ChangeInfoScreen from "../screens/another/ChangeInfoScreen";
 
+import EventScreen from "../screens/another/EventScreen";
+
 const Stack = createStackNavigator();
 
 const StackNav = () => {
@@ -15,6 +17,7 @@ const StackNav = () => {
       }}
     >
       <Stack.Screen name="BottomMain" component={BottomMain} />
+      <Stack.Screen name="EventScreen" component={EventScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="ChangeInfoScreen" component={ChangeInfoScreen} />
     </Stack.Navigator>

@@ -1,25 +1,27 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { View, Text, Button, ScrollView, StyleSheet } from "react-native";
 import Slider from "../components/Slider";
-import { ThemeConText } from "../contexts/ThemeContext";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 const HomeScreen = ({ navigation }) => {
-  const {colors, fontSizes} = useContext(ThemeConText);
+  const { colors, fontSizes } = useContext(ThemeContext);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={{fontSize: fontSizes.xxLarge}}>BOOK HUNTER</Text>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text
+          style={[
+            styles.headerText,
+            { fontSize: fontSizes.xxxLarge, color: colors.primary },
+          ]}
+        >
+          BOOK HUNTER
+        </Text>
       </View>
-      <Slider />
-      {/* Main Content */}
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Home Screen</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => navigation.navigate("Details")}
-        />
-      </ScrollView>
+
+      <Slider navigation={navigation}/>
+
+      <ScrollView contentContainerStyle={styles.content}></ScrollView>
     </View>
   );
 };
@@ -30,10 +32,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
+    marginVertical: 20,
     padding: 10,
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+  },
+  headerText: {
+    fontWeight: "900",
   },
   content: {
     flexGrow: 1,

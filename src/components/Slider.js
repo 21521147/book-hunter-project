@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Image, StyleSheet, Dimensions, Text, ScrollView } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { useFetchEvents } from "../services/eventService";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
-const Slider = () => {
+const Slider = ({ navigation }) => {
   const { events, loading } = useFetchEvents();
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(1); // Start from the first "real" slide
@@ -23,7 +31,10 @@ const Slider = () => {
     if (scrollViewRef.current) {
       setCurrentIndex((prevIndex) => {
         const nextIndex = prevIndex + 1;
-        scrollViewRef.current.scrollTo({ x: nextIndex * viewportWidth, animated: true });
+        scrollViewRef.current.scrollTo({
+          x: nextIndex * viewportWidth,
+          animated: true,
+        });
         return nextIndex;
       });
     }
@@ -35,7 +46,10 @@ const Slider = () => {
 
     // If swiped to the duplicated first or last image, reset to the real first or last
     if (index === 0) {
-      scrollViewRef.current.scrollTo({ x: events.length * viewportWidth, animated: false });
+      scrollViewRef.current.scrollTo({
+        x: events.length * viewportWidth,
+        animated: false,
+      });
       setCurrentIndex(events.length);
     } else if (index === events.length + 1) {
       scrollViewRef.current.scrollTo({ x: viewportWidth, animated: false });
@@ -71,9 +85,15 @@ const Slider = () => {
         contentOffset={{ x: viewportWidth, y: 0 }} // Start at the first real slide
       >
         {loopedEvents.map((event, index) => (
-          <View key={index} style={styles.slide}>
+          <TouchableOpacity
+            key={index}
+            style={styles.slide}
+            onPress={() =>
+              navigation.navigate("EventScreen", { eventId: event.id })
+            }
+          >
             <Image source={{ uri: event.banner }} style={styles.image} />
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -84,7 +104,10 @@ const Slider = () => {
           return (
             <View
               key={index}
-              style={[styles.dot, isActive ? styles.activeDot : styles.inactiveDot]}
+              style={[
+                styles.dot,
+                isActive ? styles.activeDot : styles.inactiveDot,
+              ]}
             />
           );
         })}
