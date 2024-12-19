@@ -102,6 +102,20 @@ const bookService = {
       throw error;
     }
   },
+
+  getAllBooks: async () => {
+    try {
+      const querySnapshot = await getDocs(booksCollection);
+      const books = [];
+      querySnapshot.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+      });
+      return books;
+    } catch (error) {
+      console.error("Error fetching all books: ", error);
+      throw error;
+    }
+  },
 };
 
 export default bookService;
