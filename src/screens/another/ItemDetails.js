@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -14,7 +13,8 @@ import bookService from "../../services/bookService";
 import Loading from "../../components/Loading";
 import ImageSlider from "../../components/ImageSlider";
 import { ThemeContext } from "../../contexts/ThemeContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../../contexts/AuthContext";
+import cartService from "../../services/cartService";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const ItemDetails = () => {
@@ -23,7 +23,9 @@ const ItemDetails = () => {
   const { bookId } = route.params;
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
   const { colors, fontSizes } = useContext(ThemeContext);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -42,15 +44,15 @@ const ItemDetails = () => {
 
   const addToCart = async () => {
     try {
-      const userToken = await AsyncStorage.getItem("userToken");
-      if (!userToken) {
+      if (!user) {
         Alert.alert(
           "Sign In Required",
           "You must be signed in to add items to the cart.",
           [
             {
               text: "Sign In",
-              onPress: () => navigation.navigate("SignIn"),
+              onPress: () =>
+                navigation.navigate("BottomMain", { screen: "Profile" }),
             },
             {
               text: "Cancel",
@@ -62,15 +64,29 @@ const ItemDetails = () => {
         return;
       }
 
-      const cart = await AsyncStorage.getItem("cart");
-      let cartItems = cart ? JSON.parse(cart) : [];
-      cartItems.push(book);
-      await AsyncStorage.setItem("cart", JSON.stringify(cartItems));
-      Alert.alert("Success", "Book added to cart!");
+      const cartItem = {
+        id: book.id,
+        quantity: quantity,
+      };
+
+      const result = await cartService.addToCart(cartItem, user.id);
+      if (result.success) {
+        Alert.alert("Success", result.message);
+      } else {
+        Alert.alert("Error", result.message);
+      }
     } catch (error) {
       console.error("Error adding book to cart:", error);
       Alert.alert("Error", "Failed to add book to cart.");
     }
+  };
+
+  const incrementQuantity = () => {
+    setQuantity((prevQuantity) => prevQuantity + 1);
+  };
+
+  const decrementQuantity = () => {
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
   if (loading) {
@@ -92,17 +108,29 @@ const ItemDetails = () => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color={colors.primary} />
           </TouchableOpacity>
           <View style={styles.headerIcons}>
-            <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("BottomMain", { screen: "Search" })
+              }
+            >
               <Icon name="search" size={24} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("BottomMain", { screen: "Home" })
+              }
+            >
               <Icon name="home" size={24} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("BottomMain", { screen: "Cart" })
+              }
+            >
               <Icon name="cart" size={24} color={colors.primary} />
             </TouchableOpacity>
           </View>
@@ -141,14 +169,31 @@ const ItemDetails = () => {
           </Text>
         </View>
       </ScrollView>
-      <TouchableOpacity
-        style={[styles.addToCartButton, { backgroundColor: colors.primary }]}
-        onPress={addToCart}
-      >
-        <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
-          Add to Cart
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.footer}>
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity
+            onPress={decrementQuantity}
+            style={styles.quantityButton}
+          >
+            <Text style={styles.quantityButtonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantityText}>{quantity}</Text>
+          <TouchableOpacity
+            onPress={incrementQuantity}
+            style={styles.quantityButton}
+          >
+            <Text style={styles.quantityButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={[styles.addToCartButton, { backgroundColor: colors.primary }]}
+          onPress={addToCart}
+        >
+          <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
+            Add to Cart
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -204,15 +249,41 @@ const styles = StyleSheet.create({
   price: {
     marginBottom: 20,
   },
+  quantityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  quantityButton: {
+    backgroundColor: "#ddd",
+    padding: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  quantityButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  quantityText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   addToCartButton: {
-    padding: 15,
+    marginVertical: 5,
+    padding: 10,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 20,
   },
   addToCartButtonText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 1,
   },
 });
 

@@ -53,6 +53,7 @@ const FlatlistByRatingAvg = ({ navigation }) => {
         data={books}
         renderItem={renderItem}
         horizontal
+        showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.list}
       />

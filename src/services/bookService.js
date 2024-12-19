@@ -9,6 +9,7 @@ import {
   limit,
   orderBy,
 } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const booksCollection = collection(db, "books");
 
@@ -91,9 +92,16 @@ const bookService = {
 
   getBookById: async (id) => {
     try {
+      const cachedBook = await AsyncStorage.getItem(`book_${id}`);
+      if (cachedBook) {
+        return JSON.parse(cachedBook);
+      }
+
       const bookDoc = await getDoc(doc(db, "books", id.toString()));
       if (bookDoc.exists()) {
-        return { id: bookDoc.id, ...bookDoc.data() };
+        const bookData = { id: bookDoc.id, ...bookDoc.data() };
+        await AsyncStorage.setItem(`book_${id}`, JSON.stringify(bookData));
+        return bookData;
       } else {
         throw new Error("Book not found");
       }

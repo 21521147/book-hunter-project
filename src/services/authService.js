@@ -8,7 +8,9 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { db, auth } from "../api/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+
+const COUNTER_DOC_ID = "userCounter";
 
 const authService = {
   async register(email, password) {
@@ -20,8 +22,25 @@ const authService = {
       );
       const user = userCredential.user;
       await sendEmailVerification(user);
+
+      const counterRef = doc(db, "counters", COUNTER_DOC_ID);
+      const counterDoc = await getDoc(counterRef);
+      let newUserId;
+
+      if (counterDoc.exists()) {
+        const counterData = counterDoc.data();
+        newUserId = counterData.lastUserId + 1;
+        // Update the counter value
+        await updateDoc(counterRef, { lastUserId: newUserId });
+      } else {
+        // Initialize the counter if it doesn't exist
+        newUserId = 1;
+        await setDoc(counterRef, { lastUserId: newUserId });
+      }
+
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
+        id: newUserId.toString(),
         name: user.email,
         email: user.email,
         cart: [],
