@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Image,
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -14,10 +15,19 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import ToggleMode from "../components/ToggleMode";
 import IconBox from "../components/IconBox";
 import Loading from "../components/Loading";
+import { UserContext } from "../contexts/UserContext";
 
-const ProfileScreen = ({ navigation }) => {
-  const { user, logout } = useContext(AuthContext);
+const ProfileScreen = ({ navigation, route }) => {
+  const { user, updateUser } = useContext(UserContext);
   const { colors, fontSizes } = useContext(ThemeContext);
+  const { logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (route.params?.updated) {
+      // Fetch updated user information if available
+      updateUser(user.id, {});
+    }
+  }, [route.params?.updated]);
 
   const handleSignOut = async () => {
     await logout();
@@ -33,11 +43,9 @@ const ProfileScreen = ({ navigation }) => {
       <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.header}>
           <View style={[styles.headerLeft]}>
-            <Icon1
-              style={[styles.icon, { borderColor: colors.icon }]}
-              name="user-alt"
-              size={40}
-              color={colors.icon}
+            <Image
+              source={user.profilePicture ? { uri: user.profilePicture } : require("../../assets/default-profile.png")}
+              style={styles.profileImage}
             />
             <View>
               <Text style={{ color: colors.text, fontSize: fontSizes.medium }}>
@@ -114,15 +122,7 @@ const ProfileScreen = ({ navigation }) => {
 
         <View style={[styles.line, { borderColor: colors.text }]} />
 
-        <View
-          style={{
-            justifyContent: "flex-start",
-            alignItems: "center",
-            width: "95%",
-            flexDirection: "row",
-            flexWrap: "wrap",
-          }}
-        >
+        <View style={styles.iconBoxContainer}>
           <IconBox
             icon="heart-outline"
             text="Sản phẩm yêu thích"
@@ -183,6 +183,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginRight: 10,
+  },
   icon: {
     padding: 10,
     margin: 10,
@@ -200,6 +206,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     paddingHorizontal: 16,
+  },
+  iconBoxContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    padding: 10,
   },
   section2: {
     width: "100%",

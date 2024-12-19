@@ -13,7 +13,7 @@ const UserContextProvider = ({ children }) => {
     const unsubscribe = authService.onAuthStateChange(async (user) => {
       if (user) {
         const userInfo = await getUserInfo(user.uid);
-        setUser(userInfo);
+        setUser({ id: user.uid, ...userInfo });
       } else {
         setUser(null);
       }
@@ -45,7 +45,7 @@ const UserContextProvider = ({ children }) => {
       const userRef = doc(db, "users", userId);
       await setDoc(userRef, data, { merge: true });
       const updatedUser = await getUserInfo(userId);
-      setUser(updatedUser);
+      setUser({ id: userId, ...updatedUser });
     } catch (error) {
       console.log("Error updating user info: ", error);
       throw error;
