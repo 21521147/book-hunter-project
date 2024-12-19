@@ -12,10 +12,10 @@ import {
 import { useRoute, useNavigation } from "@react-navigation/native";
 import bookService from "../../services/bookService";
 import Loading from "../../components/Loading";
-import BackButton from "../../components/BackButton";
 import ImageSlider from "../../components/ImageSlider";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const ItemDetails = () => {
   const route = useRoute();
@@ -91,6 +91,22 @@ const ItemDetails = () => {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <Icon name="arrow-back" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity onPress={() => navigation.navigate("Search")}>
+              <Icon name="search" size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+              <Icon name="home" size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+              <Icon name="cart" size={24} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
+        </View>
         <ImageSlider images={book.images} />
         <View style={styles.content}>
           <Text
@@ -125,7 +141,6 @@ const ItemDetails = () => {
           </Text>
         </View>
       </ScrollView>
-      <BackButton style={styles.backButton} />
       <TouchableOpacity
         style={[styles.addToCartButton, { backgroundColor: colors.primary }]}
         onPress={addToCart}
@@ -151,9 +166,16 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
-  icon: {
-    width: "100%",
-    marginTop: 10,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  headerIcons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: 100,
   },
   image: {
     width: "100%",
@@ -161,10 +183,6 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 10,
     marginBottom: 20,
-  },
-  backButton: {
-    top: 20,
-    left: 10,
   },
   title: {
     fontWeight: "bold",

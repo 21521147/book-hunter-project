@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, FlatList, StyleSheet, Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BookBox from "../BookBox";
 import bookService from "../../services/bookService";
 import Loading from "../Loading";
@@ -13,9 +14,19 @@ const FlatlistByRatingAvg = ({ navigation }) => {
   useEffect(() => {
     const fetchTopRatedBooks = async () => {
       try {
-        const topRatedBooks = await bookService.getTop10BooksByRatingAvg();
-        setBooks(topRatedBooks);
-        setLoading(false);
+        const cachedBooks = await AsyncStorage.getItem("top_rated_books");
+        if (cachedBooks) {
+          setBooks(JSON.parse(cachedBooks));
+          setLoading(false);
+        } else {
+          const topRatedBooks = await bookService.getTop10BooksByRatingAvg();
+          setBooks(topRatedBooks);
+          await AsyncStorage.setItem(
+            "top_rated_books",
+            JSON.stringify(topRatedBooks)
+          );
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error fetching top rated books: ", error);
         setLoading(false);

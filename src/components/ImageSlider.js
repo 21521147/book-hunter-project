@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     width: viewportWidth,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 10,
   },
   image: {
     width: "80%",
