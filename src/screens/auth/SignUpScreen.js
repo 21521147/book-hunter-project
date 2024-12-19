@@ -17,6 +17,8 @@ const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { fontSizes, colors } = useContext(ThemeContext);
@@ -24,7 +26,7 @@ const SignUpScreen = ({ navigation }) => {
   const handleSignUp = async () => {
     setError(""); // Xóa lỗi trước đó
 
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !userName || !phoneNumber) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin!");
       return;
     }
@@ -37,7 +39,7 @@ const SignUpScreen = ({ navigation }) => {
     setLoading(true); // Bắt đầu trạng thái loading
 
     try {
-      await authService.register(email, password);
+      await authService.register(email, password, userName, phoneNumber);
       console.log("Đăng ký thành công!");
 
       Alert.alert(
@@ -96,11 +98,22 @@ const SignUpScreen = ({ navigation }) => {
       </Text>
       <InputBox
         icon="person"
+        placeholder="Tên người dùng"
+        onChangeText={(text) => setUserName(text)}
+        value={userName}
+      />
+      <InputBox
+        icon="mail"
         placeholder="Email"
         onChangeText={(text) => setEmail(text)}
         value={email}
       />
-
+      <InputBox
+        icon="call"
+        placeholder="Số điện thoại"
+        onChangeText={(text) => setPhoneNumber(text)}
+        value={phoneNumber}
+      />
       <InputBox
         icon="lock-closed"
         placeholder="Mật khẩu"
@@ -108,7 +121,6 @@ const SignUpScreen = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
         value={password}
       />
-
       <InputBox
         icon="lock-closed"
         placeholder="Nhập lại mật khẩu"
