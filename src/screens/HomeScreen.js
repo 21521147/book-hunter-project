@@ -28,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
           </Text>
         </View>
         
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
           <Slider navigation={navigation} />
 
           <View style={styles.section}>

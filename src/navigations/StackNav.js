@@ -3,7 +3,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BottomMain from "./BottomMain";
 import ProfileScreen from "../screens/ProfileScreen";
 import ChangeInfoScreen from "../screens/another/ChangeInfoScreen";
-
 import EventScreen from "../screens/another/EventScreen";
 import ItemDetails from "../screens/another/ItemDetails";
 
