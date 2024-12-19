@@ -3,14 +3,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import StackNav from "./src/navigations/StackNav";
 import { ThemeProvider } from "./src/contexts/ThemeContext";
 import AuthContextProvider from "./src/contexts/AuthContext";
+import UserContextProvider from "./src/contexts/UserContext";
 const App = () => {
   return (
     <AuthContextProvider>
-      <ThemeProvider>
-        <NavigationContainer>
-          <StackNav />
-        </NavigationContainer>
-      </ThemeProvider>
+      <UserContextProvider>
+        <ThemeProvider>
+          <NavigationContainer>
+            <StackNav />
+          </NavigationContainer>
+        </ThemeProvider>
+      </UserContextProvider>
     </AuthContextProvider>
   );
 };
