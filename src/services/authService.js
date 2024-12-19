@@ -8,9 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { db, auth } from "../api/firebase";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-
-const COUNTER_DOC_ID = "userCounter";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const authService = {
   async register(email, password, userName, phoneNumber) {
@@ -23,22 +21,7 @@ const authService = {
       const user = userCredential.user;
       await sendEmailVerification(user);
 
-      const counterRef = doc(db, "counters", COUNTER_DOC_ID);
-      const counterDoc = await getDoc(counterRef);
-      let newUserId;
-
-      if (counterDoc.exists()) {
-        const counterData = counterDoc.data() || {};
-        newUserId = (counterData.lastUserId || 0) + 1;
-        // Update the counter value
-        await updateDoc(counterRef, { lastUserId: newUserId });
-      } else {
-        // Initialize the counter if it doesn't exist
-        newUserId = 1;
-        await setDoc(counterRef, { lastUserId: newUserId });
-      }
-
-      const userRef = doc(db, "users", newUserId.toString());
+      const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
         name: userName,
         email: user.email,
@@ -47,9 +30,9 @@ const authService = {
         savedItems: [],
         phoneNumber: phoneNumber,
         address: "Chưa có",
-        created_at: new Date().toISOString(),
+        created_at: new Date(),
       });
-      return { ...user, id: newUserId.toString() };
+      return user;
     } catch (error) {
       throw error;
     }
@@ -62,9 +45,8 @@ const authService = {
         email,
         password
       );
-      
-      return userCredential.user;
-      console.log("Đang đăng nhập với email:", email, password);
+      const user = userCredential.user;
+      return user;
     } catch (error) {
       throw error;
     }

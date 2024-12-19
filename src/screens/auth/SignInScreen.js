@@ -10,14 +10,13 @@ import {
 } from "react-native";
 import InputBox from "../../components/InputBox";
 import { ThemeContext } from "../../contexts/ThemeContext";
-import { AuthContext } from "../../contexts/AuthContext";
+import authService from "../../services/authService";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { colors, fontSizes } = useContext(ThemeContext);
-  const { login } = useContext(AuthContext);
   const [error, setError] = useState("");
 
   const handleSignIn = async () => {
@@ -29,8 +28,8 @@ const SignInScreen = ({ navigation }) => {
     }
 
     try {
-      await login(email, password);
-
+      const user = await authService.login(email, password);
+      console.log("Logged in user:", user);
     } catch (error) {
       console.log("Đăng nhập thất bại:", error.code, error.message);
 

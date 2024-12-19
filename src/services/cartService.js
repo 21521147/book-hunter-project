@@ -2,30 +2,29 @@ import { db } from "../api/firebase";
 import {
   collection,
   addDoc,
-  getDocs,
-  query,
-  where,
+  getDoc,
   doc,
   updateDoc,
   arrayUnion,
+  arrayRemove,
+  deleteDoc,
 } from "firebase/firestore";
 
 const CART_COLLECTION = "carts";
 
-const getCart = async (userId) => {
+const getCartItems = async (cartIds) => {
   try {
-    const q = query(
-      collection(db, CART_COLLECTION),
-      where("userId", "==", userId)
-    );
-    const querySnapshot = await getDocs(q);
     const cartItems = [];
-    querySnapshot.forEach((doc) => {
-      cartItems.push({ id: doc.id, ...doc.data() });
-    });
+    for (const cartId of cartIds) {
+      const cartItemRef = doc(db, CART_COLLECTION, cartId);
+      const cartItemDoc = await getDoc(cartItemRef);
+      if (cartItemDoc.exists()) {
+        cartItems.push({ id: cartId, ...cartItemDoc.data() });
+      }
+    }
     return cartItems;
   } catch (error) {
-    console.error("Error getting cart:", error);
+    console.error("Error getting cart items:", error);
     return [];
   }
 };
@@ -34,7 +33,6 @@ const addToCart = async (item, userId) => {
   try {
     const docRef = await addDoc(collection(db, CART_COLLECTION), item);
     const cartId = docRef.id;
-    console.error("Error adding item to cart");
     const userRef = doc(db, "users", userId);
     await updateDoc(userRef, {
       cart: arrayUnion(cartId),
@@ -47,9 +45,25 @@ const addToCart = async (item, userId) => {
   }
 };
 
+const removeFromCart = async (itemId, userId) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      cart: arrayRemove(itemId),
+    });
+    const cartItemRef = doc(db, CART_COLLECTION, itemId);
+    await deleteDoc(cartItemRef);
+    return { success: true, message: "Item removed from cart!" };
+  } catch (error) {
+    console.error("Error removing item from cart:", error);
+    return { success: false, message: "Failed to remove item from cart." };
+  }
+};
+
 const cartService = {
-  getCart,
+  getCartItems,
   addToCart,
+  removeFromCart,
 };
 
 export default cartService;

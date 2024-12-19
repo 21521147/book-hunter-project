@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, use } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import bookService from "../../services/bookService";
 import Loading from "../../components/Loading";
 import ImageSlider from "../../components/ImageSlider";
 import { ThemeContext } from "../../contexts/ThemeContext";
-import { AuthContext } from "../../contexts/AuthContext";
+import { UserContext } from "../../contexts/UserContext";
 import cartService from "../../services/cartService";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -24,8 +24,9 @@ const ItemDetails = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [buttonText, setButtonText] = useState("Add to Cart");
   const { colors, fontSizes } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -71,6 +72,7 @@ const ItemDetails = () => {
 
       const result = await cartService.addToCart(cartItem, user.id);
       if (result.success) {
+        setButtonText("Added to Cart");
         Alert.alert("Success", result.message);
       } else {
         Alert.alert("Error", result.message);
@@ -186,11 +188,20 @@ const ItemDetails = () => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={[styles.addToCartButton, { backgroundColor: colors.primary }]}
+          style={[
+            styles.addToCartButton,
+            {
+              backgroundColor:
+                buttonText === "Added to Cart"
+                  ? colors.secondary
+                  : colors.primary,
+            },
+          ]}
           onPress={addToCart}
+          disabled={buttonText === "Added to Cart"}
         >
           <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
-            Add to Cart
+            {buttonText}
           </Text>
         </TouchableOpacity>
       </View>
