@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   SafeAreaView,
   Image,
 } from "react-native";
@@ -40,8 +39,13 @@ const ProfileScreen = ({ navigation, route }) => {
   const createdAt = user.created_at.toDate().toLocaleDateString();
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.header}>
+          <Text style={[styles.headerText, { color: colors.text, fontSize: fontSizes.large }]}>
+            Hồ sơ cá nhân
+          </Text>
+        </View>
+        <View style={styles.profileHeader}>
           <View style={[styles.headerLeft]}>
             <Image
               source={user.profilePicture ? { uri: user.profilePicture } : require("../../assets/default-profile.png")}
@@ -62,14 +66,12 @@ const ProfileScreen = ({ navigation, route }) => {
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Icon
                 name="create-outline"
-                size={40}
+                size={30}
                 style={{ color: colors.icon }}
               />
             </View>
           </TouchableOpacity>
         </View>
-
-        <View style={[styles.line, { borderColor: colors.text }]} />
 
         <View style={styles.section}>
           <Text
@@ -158,7 +160,7 @@ const ProfileScreen = ({ navigation, route }) => {
             Sign out
           </Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
@@ -172,7 +174,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    marginTop: 30,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  headerText: {
+    marginLeft: 10,
+    fontWeight: "bold",
+  },
+  profileHeader: {
+    marginTop: 20,
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
@@ -184,8 +196,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 50,
     marginRight: 10,
   },
