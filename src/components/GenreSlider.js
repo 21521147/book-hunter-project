@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   View,
+  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import bookService from "../services/bookService";
@@ -15,6 +16,23 @@ const GenreSlider = ({ selectedGenre, setSelectedGenre }) => {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const { colors, fontSizes } = useContext(ThemeContext);
+
+  // Thêm icon cho từng thể loại
+  const genreIcons = {
+    "Tất cả": require('../../assets/images/genres/tatca.png'), 
+    "Thiếu nhi": require("../../assets/images/genres/thieunhi.png"),
+    "Lịch sử": require("../../assets/images/genres/lichsu.png"),
+    "Tiểu thuyết": require("../../assets/images/genres/tieuthuyet.png"),
+    "Kinh tế": require("../../assets/images/genres/kinhte.png"),
+    "Y học": require("../../assets/images/genres/yhoc.png"),
+    "Tâm lý": require("../../assets/images/genres/tamly.png"),
+    "Trinh thám": require("../../assets/images/genres/trinhtham.png"),
+    "Văn hoá": require("../../assets/images/genres/vanhoa.png"),
+    "Ngôn tình": require("../../assets/images/genres/ngontinh.png"),
+    "Kinh dị": require("../../assets/images/genres/kinhdi.png"),
+    "Khoa học": require("../../assets/images/genres/khoahoc.png"),
+    "Chính trị": require("../../assets/images/genres/chinhtri.png"),
+  };
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -54,9 +72,21 @@ const GenreSlider = ({ selectedGenre, setSelectedGenre }) => {
       ]}
       onPress={() => setSelectedGenre(item)}
     >
-      <Text style={{ color: item === selectedGenre ? colors.textSrd : colors.text, fontSize: fontSizes.medium }}>
-        {item}
-      </Text>
+      <View style={styles.iconAndText}>
+        <Image
+          source={genreIcons[item]}
+          style={styles.icon}
+        />
+        <Text
+          style={{
+            color: item === selectedGenre ? colors.textSrd : colors.text,
+            fontSize: fontSizes.medium,
+            marginLeft: 10,
+          }}
+        >
+          {item}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -86,6 +116,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+  },
+  iconAndText: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
   },
 });
 
