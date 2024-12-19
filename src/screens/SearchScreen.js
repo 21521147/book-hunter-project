@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, TextInput, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import * as ImagePicker from 'expo-image-picker';
 import bookService from "../services/bookService";
 import BookBox from "../components/BookBox";
 
@@ -44,6 +45,20 @@ const SearchScreen = ({ navigation }) => {
     fetchPopularSearches();
   }, []);
 
+  const handleImageSearch = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync();
+    if (!result.cancelled) {
+      // Implement image search logic here
+      console.log(result.uri);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -52,15 +67,24 @@ const SearchScreen = ({ navigation }) => {
             <Icon name="arrow-back" size={24} color="#6200ee" />
           </TouchableOpacity>
           <View style={styles.searchInputContainer}>
-            <Icon name="search" size={20} color="#6200ee" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search by book name, genre, or author"
               value={query}
               onChangeText={setQuery}
             />
+            <TouchableOpacity onPress={handleImageSearch}>
+              <Icon name="camera" size={20} color="#6200ee" style={styles.cameraIcon} />
+            </TouchableOpacity>
+            <Icon name="search" size={20} color="#6200ee" style={styles.searchIcon} />
           </View>
         </View>
+        {results.length === 0 && query === "" && (
+          <View style={styles.popularSearchesHeaderContainer}>
+            <Icon name="flame" size={20} color="#6200ee" style={styles.popularSearchesIcon} />
+            <Text style={styles.popularSearchesHeader}>Tìm kiếm phổ biến</Text>
+          </View>
+        )}
         {results.length === 0 && query !== "" ? (
           <Text style={styles.noResultsText}>Xin lỗi! Chúng tôi chưa có sách bạn đang cần</Text>
         ) : (
@@ -114,7 +138,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   searchIcon: {
-    marginRight: 8,
+    marginLeft: 8,
+  },
+  cameraIcon: {
+    marginLeft: 8,
   },
   list: {
     justifyContent: 'space-around',
@@ -127,6 +154,19 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 16,
     marginTop: 20,
+  },
+  popularSearchesHeaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  popularSearchesIcon: {
+    marginRight: 8,
+  },
+  popularSearchesHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'left',
   },
   homeButton: {
     backgroundColor: "#6200ee",
