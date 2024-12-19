@@ -93,14 +93,39 @@ const ItemDetails = () => {
       >
         <ImageSlider images={book.images} />
         <View style={styles.content}>
-          <Text style={[styles.title, {fontSize: fontSizes.xLarge, color: colors.primary}]}>{book.name}</Text>
-          <Text style={[styles.author, {fontSize: fontSizes.medium, color: colors.secondary}]}>Tác giả: {book.authors.join(", ")}</Text>
-          <Text style={[styles.price, {fontSize: fontSizes.medium, color: colors.secondary}]}>Giá: {book.price.toLocaleString()} VND</Text>
-          <Text style={{fontSize: fontSizes.medium, color: colors.text}}>Mô tả: </Text>
-          <Text style={{fontSize: fontSizes.medium, color: colors.text}}>{book.description}</Text>
+          <Text
+            style={[
+              styles.title,
+              { fontSize: fontSizes.xLarge, color: colors.primary },
+            ]}
+          >
+            {book.name}
+          </Text>
+          <Text
+            style={[
+              styles.author,
+              { fontSize: fontSizes.medium, color: colors.secondary },
+            ]}
+          >
+            Tác giả: {book.authors.join(", ")}
+          </Text>
+          <Text
+            style={[
+              styles.price,
+              { fontSize: fontSizes.medium, color: colors.secondary },
+            ]}
+          >
+            Giá: {book.price.toLocaleString()} VND
+          </Text>
+          <Text style={{ fontSize: fontSizes.medium, color: colors.text }}>
+            Mô tả:{" "}
+          </Text>
+          <Text style={{ fontSize: fontSizes.medium, color: colors.text }}>
+            {book.description}
+          </Text>
         </View>
       </ScrollView>
-      <BackButton style={styles.backButton}/>
+      <BackButton style={styles.backButton} />
       <TouchableOpacity
         style={[styles.addToCartButton, { backgroundColor: colors.primary }]}
         onPress={addToCart}
@@ -143,7 +168,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  label: {
+    fontWeight: "bold",
+    marginRight: 5,
   },
   author: {
     marginBottom: 10,

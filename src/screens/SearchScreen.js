@@ -148,10 +148,11 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   list: {
-    justifyContent: 'space-around',
-  },
+    justifyContent: 'center',
+    alignItems: 'center',},
   row: {
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
   noResultsText: {
     textAlign: 'center',
