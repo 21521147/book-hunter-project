@@ -11,6 +11,7 @@ import {
 import InputBox from "../../components/InputBox";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import { AuthContext } from "../../contexts/AuthContext";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -109,6 +110,24 @@ const SignInScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
+        <Text style={{ color: colors.text, fontSize: fontSizes.small }}>
+          Hoặc đăng nhập với
+        </Text>
+        <View style={styles.socialContainer}>
+          <TouchableOpacity
+            style={[styles.socialButton, { backgroundColor: "#3b5998" }]}
+          >
+            <FontAwesome name="facebook" size={20} color="#fff" />
+            <Text style={styles.socialButtonText}>Facebook</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.socialButton, { backgroundColor: "#db4437" }]}
+          >
+            <FontAwesome name="google" size={20} color="#fff" />
+            <Text style={styles.socialButtonText}>Google</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ flexDirection: "row" }}>
           <Text style={{ color: colors.text, fontSize: fontSizes.small }}>
             Bạn chưa có tài khoản?
@@ -154,5 +173,25 @@ const styles = StyleSheet.create({
     width: "80%",
     marginVertical: 10,
     borderRadius: 5,
+  },
+  socialContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    marginTop: 10,
+    marginBottom: 15,
+  },
+  socialButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    borderRadius: 5,
+    width: "48%",
+  },
+  socialButtonText: {
+    color: "#fff",
+    marginLeft: 10,
+    fontWeight: "bold",
   },
 });
