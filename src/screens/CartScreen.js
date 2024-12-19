@@ -27,7 +27,12 @@ const CartScreen = ({ navigation }) => {
           <View style={styles.headerIcons} />
         </View>
         {cartItems.length === 0 ? (
-          <Text style={[styles.emptyText, { color: colors.secondary }]}>Giỏ hàng của bạn đang trống</Text>
+          <View style={styles.emptyContainer}>
+            <Text style={[styles.emptyText, { color: colors.secondary }]}>Giỏ hàng của bạn đang trống</Text>
+            <TouchableOpacity style={styles.shopButton} onPress={() => navigation.navigate("Home")}>
+              <Text style={[styles.shopButtonText, { color: colors.textSrd }]}>Mua sắm ngay</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           <FlatList
             data={cartItems}
@@ -76,10 +81,25 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyText: {
     textAlign: "center",
-    marginTop: 20,
+    marginBottom: 20,
     fontSize: 18,
+  },
+  shopButton: {
+    backgroundColor: "#0A51B0",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  shopButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
