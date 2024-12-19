@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, SafeAreaView, TextInput, FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from 'expo-image-picker';
 import bookService from "../services/bookService";
 import BookBox from "../components/BookBox";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 const SearchScreen = ({ navigation }) => {
+  const { colors, fontSizes } = useContext(ThemeContext);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [popularSearches, setPopularSearches] = useState([]);
@@ -64,29 +66,34 @@ const SearchScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color="#6200ee" />
+            <Icon name="arrow-back" size={24} color={colors.primary} />
           </TouchableOpacity>
           <View style={styles.searchInputContainer}>
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, { color: colors.text }]}
               placeholder="Search by book name, genre, or author"
+              placeholderTextColor={colors.secondary}
               value={query}
               onChangeText={setQuery}
             />
             <TouchableOpacity onPress={handleImageSearch}>
-              <Icon name="camera" size={20} color="#6200ee" style={styles.cameraIcon} />
+              <Icon name="camera" size={20} color={colors.primary} style={styles.cameraIcon} />
             </TouchableOpacity>
-            <Icon name="search" size={20} color="#6200ee" style={styles.searchIcon} />
+            <Icon name="search" size={20} color={colors.primary} style={styles.searchIcon} />
           </View>
         </View>
         {results.length === 0 && query === "" && (
           <View style={styles.popularSearchesHeaderContainer}>
-            <Icon name="flame" size={20} color="#6200ee" style={styles.popularSearchesIcon} />
-            <Text style={styles.popularSearchesHeader}>Tìm kiếm phổ biến</Text>
+            <Icon name="flame" size={20} color={colors.primary} style={styles.popularSearchesIcon} />
+            <Text style={[styles.popularSearchesHeader, { color: colors.text, fontSize: fontSizes.large }]}>
+              Tìm kiếm phổ biến
+            </Text>
           </View>
         )}
         {results.length === 0 && query !== "" ? (
-          <Text style={styles.noResultsText}>Xin lỗi! Chúng tôi chưa có sách bạn đang cần</Text>
+          <Text style={[styles.noResultsText, { color: colors.secondary, fontSize: fontSizes.medium }]}>
+            Xin lỗi! Chúng tôi chưa có sách bạn đang cần
+          </Text>
         ) : (
           <FlatList
             data={results.length > 0 ? results : popularSearches}
@@ -99,9 +106,6 @@ const SearchScreen = ({ navigation }) => {
             contentContainerStyle={styles.list}
           />
         )}
-        <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate("Home")}>
-          <Text style={styles.homeButtonText}>Go to Home</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -151,8 +155,6 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     textAlign: 'center',
-    color: 'gray',
-    fontSize: 16,
     marginTop: 20,
   },
   popularSearchesHeaderContainer: {
@@ -164,20 +166,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   popularSearchesHeader: {
-    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'left',
-  },
-  homeButton: {
-    backgroundColor: "#6200ee",
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 16,
-  },
-  homeButtonText: {
-    color: "#fff",
-    fontSize: 16,
   },
 });
 
