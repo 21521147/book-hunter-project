@@ -27,10 +27,6 @@ const HomeScreen = ({ navigation }) => {
         </Text>
       </View>
       
-      <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}>
-        Welcome to Book Hunter
-      </Text>
-      
       <ScrollView>
         <Slider navigation={navigation} />
 

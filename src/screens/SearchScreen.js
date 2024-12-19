@@ -9,6 +9,8 @@ const SearchScreen = ({ navigation }) => {
         title="Go to Home"
         onPress={() => navigation.navigate("Home")}
       />
+
+      <Text>Search Screen</Text>
     </View>
   );
 }
