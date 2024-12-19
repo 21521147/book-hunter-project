@@ -30,6 +30,7 @@ const SignInScreen = ({ navigation }) => {
 
     try {
       await login(email, password);
+
     } catch (error) {
       console.log("Đăng nhập thất bại:", error.code, error.message);
 

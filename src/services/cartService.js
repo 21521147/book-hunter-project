@@ -6,6 +6,8 @@ import {
   query,
   where,
   doc,
+  updateDoc,
+  arrayUnion,
 } from "firebase/firestore";
 
 const CART_COLLECTION = "carts";
@@ -32,7 +34,7 @@ const addToCart = async (item, userId) => {
   try {
     const docRef = await addDoc(collection(db, CART_COLLECTION), item);
     const cartId = docRef.id;
-
+    console.error("Error adding item to cart");
     const userRef = doc(db, "users", userId);
     await updateDoc(userRef, {
       cart: arrayUnion(cartId),
