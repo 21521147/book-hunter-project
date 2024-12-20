@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, SafeAreaView, TextInput, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, SafeAreaView, TextInput, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from 'expo-image-picker';
 import bookService from "../services/bookService";
@@ -11,13 +11,16 @@ const SearchScreen = ({ navigation }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [popularSearches, setPopularSearches] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
       if (query === "") {
         setResults([]);
+        setLoading(false);
         return;
       }
+      setLoading(true);
       try {
         const allBooks = await bookService.getAllBooks();
         const filteredBooks = allBooks.filter(book =>
@@ -28,6 +31,8 @@ const SearchScreen = ({ navigation }) => {
         setResults(filteredBooks);
       } catch (error) {
         console.error("Error searching books: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -82,21 +87,36 @@ const SearchScreen = ({ navigation }) => {
             <Icon name="search" size={20} color={colors.primary} style={styles.searchIcon} />
           </View>
         </View>
-        {results.length === 0 && query === "" && (
-          <View style={styles.popularSearchesHeaderContainer}>
-            <Icon name="flame" size={20} color={colors.primary} style={styles.popularSearchesIcon} />
-            <Text style={[styles.popularSearchesHeader, { color: colors.text, fontSize: fontSizes.large }]}>
-              Tìm kiếm phổ biến
-            </Text>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
-        )}
-        {results.length === 0 && query !== "" ? (
+        ) : results.length === 0 && query === "" ? (
+          <>
+            <View style={styles.popularSearchesHeaderContainer}>
+              <Icon name="flame" size={20} color={colors.primary} style={styles.popularSearchesIcon} />
+              <Text style={[styles.popularSearchesHeader, { color: colors.text, fontSize: fontSizes.large }]}>
+                Tìm kiếm phổ biến
+              </Text>
+            </View>
+            <FlatList
+              data={popularSearches}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <BookBox item={item} navigation={navigation} />
+              )}
+              numColumns={2}
+              columnWrapperStyle={styles.row}
+              contentContainerStyle={styles.list}
+            />
+          </>
+        ) : results.length === 0 && query !== "" ? (
           <Text style={[styles.noResultsText, { color: colors.secondary, fontSize: fontSizes.medium }]}>
             Xin lỗi! Chúng tôi chưa có sách bạn đang cần
           </Text>
         ) : (
           <FlatList
-            data={results.length > 0 ? results : popularSearches}
+            data={results}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <BookBox item={item} navigation={navigation} />
@@ -149,7 +169,8 @@ const styles = StyleSheet.create({
   },
   list: {
     justifyContent: 'center',
-    alignItems: 'center',},
+    alignItems: 'center',
+  },
   row: {
     justifyContent: 'space-between',
     marginBottom: 10,
@@ -169,6 +190,11 @@ const styles = StyleSheet.create({
   popularSearchesHeader: {
     fontWeight: 'bold',
     textAlign: 'left',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
