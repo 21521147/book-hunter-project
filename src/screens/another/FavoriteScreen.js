@@ -95,6 +95,7 @@ const FavoriteScreen = ({ navigation }) => {
           >
             Yêu thích
           </Text>
+          <View style={{ width: 24 }} /> {/* Placeholder for centering */}
         </View>
         <FlatList
           data={favorites}
@@ -102,6 +103,8 @@ const FavoriteScreen = ({ navigation }) => {
           renderItem={({ item }) => (
             <BookBox item={item} navigation={navigation} />
           )}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
           contentContainerStyle={styles.list}
         />
 
@@ -127,9 +130,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: "bold",
+    textAlign: "center",
+    flex: 1,
   },
   list: {
     paddingBottom: 20,
+  },
+  row: {
+    justifyContent: "space-between",
   },
   emptyContainer: {
     flex: 1,
