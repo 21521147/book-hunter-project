@@ -133,7 +133,7 @@ const ProfileScreen = ({ navigation, route }) => {
           <IconBox
             icon="cart-outline"
             text="Thông tin giỏ hàng"
-            targetScreen="ChangeInfoScreen"
+            targetScreen="Cart"
           />
         </View>
 
