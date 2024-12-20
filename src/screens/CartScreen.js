@@ -55,6 +55,26 @@ const CartScreen = ({ navigation }) => {
 
   const updateQuantity = async (itemId, change) => {
     try {
+      const item = cartItems.find((item) => item.cartId === itemId);
+      if (item.quantity === 1 && change === -1) {
+        Alert.alert(
+          "Xác nhận",
+          "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+          [
+            {
+              text: "Không",
+              style: "cancel",
+            },
+            {
+              text: "Có",
+              onPress: () => removeFromCart(itemId),
+            },
+          ],
+          { cancelable: true }
+        );
+        return;
+      }
+
       const updatedItems = cartItems.map((item) => {
         if (item.cartId === itemId) {
           const newQuantity = Math.max(1, item.quantity + change);
@@ -87,6 +107,24 @@ const CartScreen = ({ navigation }) => {
       console.error("Error removing item from cart:", error);
       Alert.alert("Error", "Failed to remove item from cart.");
     }
+  };
+
+  const confirmRemoveFromCart = (itemId) => {
+    Alert.alert(
+      "Xác nhận",
+      "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?",
+      [
+        {
+          text: "Không",
+          style: "cancel",
+        },
+        {
+          text: "Có",
+          onPress: () => removeFromCart(itemId),
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const totalCost = cartItems.reduce(
@@ -135,38 +173,32 @@ const CartScreen = ({ navigation }) => {
                       style={styles.bookImage}
                     />
                     <View style={styles.itemDetails}>
-                      <Text style={[styles.itemText, { color: colors.text }]}>
+                      <Text style={[styles.itemText, { color: colors.text, lineHeight: 24 }]}>
                         {item.name}
                       </Text>
                       <Text
-                        style={[styles.itemText, { color: colors.primary }]}
+                        style={[styles.itemText, { color: colors.primary, lineHeight: 24 }]}
                       >
                         {item.price.toLocaleString()} VND
                       </Text>
                       <View style={styles.quantityContainer}>
                         <TouchableOpacity
+                          style={styles.quantityButton}
                           onPress={() => updateQuantity(item.cartId, -1)}
                         >
-                          <Icon
-                            name="remove-circle-outline"
-                            size={24}
-                            color={colors.primary}
-                          />
+                          <Icon name="remove" size={20} color={colors.primary} />
                         </TouchableOpacity>
                         <Text style={styles.quantityText}>{item.quantity}</Text>
                         <TouchableOpacity
+                          style={styles.quantityButton}
                           onPress={() => updateQuantity(item.cartId, 1)}
                         >
-                          <Icon
-                            name="add-circle-outline"
-                            size={24}
-                            color={colors.primary}
-                          />
+                          <Icon name="add" size={20} color={colors.primary} />
                         </TouchableOpacity>
                       </View>
                     </View>
                     <TouchableOpacity
-                      onPress={() => removeFromCart(item.cartId)}
+                      onPress={() => confirmRemoveFromCart(item.cartId)}
                     >
                       <Icon name="trash" size={24} color={colors.primary} />
                     </TouchableOpacity>
@@ -174,14 +206,15 @@ const CartScreen = ({ navigation }) => {
                 ))}
               </ScrollView>
               <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>
-                  Tổng cộng: {totalCost.toLocaleString()} VND
-                </Text>
+                <View>
+                  <Text style={styles.totalLabel}>Thành tiền:</Text>
+                  <Text style={[styles.totalAmount, { color: '#FF6600' }]}>
+                    {totalCost.toLocaleString()} VND
+                  </Text>
+                </View>
                 <TouchableOpacity
-                  style={styles.buttonContainer}
-                  onPress={() =>
-                    Alert.alert("Checkout", "Thanh toán thành công!")
-                  }
+                  style={[styles.buttonContainer, { backgroundColor: colors.primary }]}
+                  onPress={() => Alert.alert("Checkout", "Thanh toán thành công!")}
                 >
                   <Text style={styles.buttonText}>Thanh Toán</Text>
                 </TouchableOpacity>
@@ -226,7 +259,8 @@ const styles = StyleSheet.create({
   },
   cartContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    padding: 10,
+    backgroundColor: "#fffafa",
   },
   itemContainer: {
     flexDirection: "row",
@@ -236,8 +270,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   bookImage: {
-    width: 60,
-    height: 90,
+    width: 80,
+    height: 110,
     marginRight: 10,
   },
   itemDetails: {
@@ -245,16 +279,29 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
+    lineHeight: 24,
   },
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    overflow: "hidden",
+    width: 120,
+  },
+  quantityButton: {
+    padding: 10,
+    backgroundColor: "#f0f0f0",
   },
   quantityText: {
-    marginHorizontal: 10,
     fontSize: 16,
     fontWeight: "bold",
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    textAlign: "center",
+    flex: 1,
   },
   emptyContainer: {
     flex: 1,
@@ -280,23 +327,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: 10,
+    padding: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+    backgroundColor: "#fff",
   },
-  totalText: {
-    fontSize: 20,
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  totalAmount: {
+    fontSize: 18,
     fontWeight: "bold",
   },
   buttonContainer: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    backgroundColor: "#3399FF",
   },
   buttonText: {
     color: "white",
     fontSize: 16,
-    lineHeight: 20,
-    textAlignVertical: "center",
+    textAlign: "center",
   },
 });
 

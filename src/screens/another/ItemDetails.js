@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, use } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Modal,
+  Image,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import bookService from "../../services/bookService";
@@ -29,6 +31,9 @@ const ItemDetails = () => {
   const [buttonText, setButtonText] = useState("Add to Cart");
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -163,6 +168,11 @@ const ItemDetails = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
+  const handleImagePress = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -176,7 +186,7 @@ const ItemDetails = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -209,7 +219,9 @@ const ItemDetails = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <ImageSlider images={book.images} />
+        <TouchableOpacity onPress={() => handleImagePress(book.images[0])}>
+          <ImageSlider images={book.images} />
+        </TouchableOpacity>
         <View style={styles.content}>
           <Text
             style={[
@@ -238,9 +250,16 @@ const ItemDetails = () => {
           <Text style={{ fontSize: fontSizes.medium, color: colors.text }}>
             Mô tả:{" "}
           </Text>
-          <Text style={{ fontSize: fontSizes.medium, color: colors.text }}>
-            {book.description}
+          <Text style={{ fontSize: fontSizes.medium, color: colors.text, textAlign: "justify" }}>
+            {showFullDescription ? book.description : `${book.description.substring(0, 500)}...`}
           </Text>
+          {book.description.length > 100 && (
+            <TouchableOpacity onPress={() => setShowFullDescription(!showFullDescription)}>
+              <Text style={{ color: colors.primary, marginTop: 5 }}>
+                {showFullDescription ? "Thu gọn" : "Xem thêm"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -256,14 +275,14 @@ const ItemDetails = () => {
             onPress={decrementQuantity}
             style={styles.quantityButton}
           >
-            <Text style={styles.quantityButtonText}>-</Text>
+            <Icon name="remove" size={20} color={colors.primary} />
           </TouchableOpacity>
           <Text style={styles.quantityText}>{quantity}</Text>
           <TouchableOpacity
             onPress={incrementQuantity}
             style={styles.quantityButton}
           >
-            <Text style={styles.quantityButtonText}>+</Text>
+            <Icon name="add" size={20} color={colors.primary} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -287,54 +306,56 @@ const ItemDetails = () => {
           </TouchableOpacity>
         </View>
       </View>
+      {selectedImage && (
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  container: {
-    flex: 1,
-    width: "100%",
-  },
-  content: {
-    padding: 20,
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#f8f9fa",
   },
   headerIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: 100,
   },
-  image: {
-    width: "100%",
-    height: 300,
-    resizeMode: "cover",
-    borderRadius: 10,
-    marginBottom: 20,
+  content: {
+    padding: 20,
   },
   title: {
     fontWeight: "bold",
     marginBottom: 15,
     textAlign: "center",
-  },
-  infoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  label: {
-    fontWeight: "bold",
-    marginRight: 5,
   },
   author: {
     marginBottom: 10,
@@ -345,22 +366,24 @@ const styles = StyleSheet.create({
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    overflow: "hidden",
+    width: 120,
   },
   quantityButton: {
-    backgroundColor: "#ddd",
-    padding: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginHorizontal: 10,
-  },
-  quantityButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
+    padding: 10,
+    backgroundColor: "#f0f0f0",
   },
   quantityText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    textAlign: "center",
+    flex: 1,
   },
   addToCartButton: {
     marginVertical: 5,
@@ -376,7 +399,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: 15,
     borderTopWidth: 1,
+    borderTopColor: "#ccc",
+    backgroundColor: "#fff",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+  },
+  modalImage: {
+    width: "90%",
+    aspectRatio: 1,
+    resizeMode: "contain",
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
   heartButton: {
     padding: 5,
