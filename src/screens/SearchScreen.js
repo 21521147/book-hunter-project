@@ -105,6 +105,7 @@ const SearchScreen = ({ navigation }) => {
               renderItem={({ item }) => (
                 <BookBox item={item} navigation={navigation} />
               )}
+              showsVerticalScrollIndicator={false}
               numColumns={2}
               columnWrapperStyle={styles.row}
               contentContainerStyle={styles.list}

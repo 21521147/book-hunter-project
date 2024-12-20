@@ -95,7 +95,7 @@ const FavoriteScreen = ({ navigation }) => {
           >
             Yêu thích
           </Text>
-          <View style={{ width: 24 }} /> {/* Placeholder for centering */}
+          <View style={{ width: 24 }} />
         </View>
         <FlatList
           data={favorites}

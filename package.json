@@ -12,10 +12,12 @@
     "@expo/metro-runtime": "~4.0.0",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.0",
     "expo": "~52.0.18",
     "expo-file-system": "~18.0.6",
+    "expo-image-picker": "~16.0.3",
     "expo-status-bar": "~2.0.0",
     "firebase": "^11.1.0",
     "react": "18.3.1",
@@ -28,8 +30,7 @@
     "react-native-screens": "~4.1.0",
     "react-native-tab-view": "^4.0.5",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "~0.19.13",
-    "expo-image-picker": "~16.0.3"
+    "react-native-web": "~0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

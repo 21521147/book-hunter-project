@@ -1,5 +1,12 @@
 import React, { useState, useContext } from "react";
-import { View, Text, Image, ScrollView, StyleSheet, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import Slider from "../components/Slider";
 import GenreSlider from "../components/GenreSlider";
 import FlatlistByGenre from "../components/book/FlatlistByGenre";
@@ -27,8 +34,11 @@ const HomeScreen = ({ navigation }) => {
             BOOK HUNTER
           </Text>
         </View>
-        
-        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
           <Slider navigation={navigation} />
 
           <View style={styles.section}>
@@ -40,6 +50,14 @@ const HomeScreen = ({ navigation }) => {
               selectedGenre={selectedGenre}
               navigation={navigation}
             />
+          </View>
+
+          <View style={styles.section}>
+            <FlatlistByRatingAvg navigation={navigation} />
+          </View>
+
+          <View style={styles.section}>
+            <FlatlistByRatingAvg navigation={navigation} />
           </View>
 
           <View style={styles.section}>

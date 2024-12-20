@@ -4,12 +4,14 @@ import StackNav from "./src/navigations/StackNav";
 import { ThemeProvider } from "./src/contexts/ThemeContext";
 import AuthContextProvider from "./src/contexts/AuthContext";
 import UserContextProvider from "./src/contexts/UserContext";
+import { StatusBar } from "react-native";
 const App = () => {
   return (
     <AuthContextProvider>
       <UserContextProvider>
         <ThemeProvider>
-          <NavigationContainer>
+          <NavigationContainer> 
+            <StatusBar barStyle="light-content" />
             <StackNav />
           </NavigationContainer>
         </ThemeProvider>
