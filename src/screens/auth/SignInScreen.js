@@ -29,7 +29,7 @@ const SignInScreen = ({ navigation }) => {
 
     try {
       const user = await authService.login(email, password);
-      console.log("Logged in user:", user);
+      Alert.alert("Thành công", "Đăng nhập thành công!");
     } catch (error) {
       console.log("Đăng nhập thất bại:", error.code, error.message);
 

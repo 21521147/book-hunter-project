@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
@@ -23,34 +24,39 @@ const CartScreen = ({ navigation }) => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const userInfo = await authService.getUserInfo(user.id);
-        if (userInfo && userInfo.cart) {
-          const items = await cartService.getCartItems(userInfo.cart);
-          const itemsWithDetails = await Promise.all(
-            items.map(async (item) => {
-              const bookDetails = await bookService.getBookById(item.id);
-              return { ...item, ...bookDetails };
-            })
-          );
-          setCartItems(itemsWithDetails);
-        }
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-      } finally {
-        setLoading(false);
+  const fetchCartItems = async () => {
+    setLoading(true);
+    try {
+      const userInfo = await authService.getUserInfo(user.id);
+      if (userInfo && userInfo.cart) {
+        const items = await cartService.getCartItems(userInfo.cart);
+        const itemsWithDetails = await Promise.all(
+          items.map(async (item, index) => {
+            const bookDetails = await bookService.getBookById(item.id);
+            return { ...item, ...bookDetails, cartId: userInfo.cart[index] };
+          })
+        );
+        setCartItems(itemsWithDetails);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchCartItems();
-  }, [user]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user) {
+        fetchCartItems();
+      }
+    }, [user])
+  );
 
   const updateQuantity = async (itemId, change) => {
     try {
       const updatedItems = cartItems.map((item) => {
-        if (item.id === itemId) {
+        if (item.cartId === itemId) {
           const newQuantity = Math.max(1, item.quantity + change);
           return { ...item, quantity: newQuantity };
         }
@@ -59,7 +65,7 @@ const CartScreen = ({ navigation }) => {
       setCartItems(updatedItems);
 
       // Cập nhật số lượng trong cơ sở dữ liệu (nếu cần)
-      await cartService.updateCartItemQuantity(itemId, user.id, change);
+      await cartService.updateCartItemQuantity(itemId, change);
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
@@ -71,7 +77,7 @@ const CartScreen = ({ navigation }) => {
       const result = await cartService.removeFromCart(itemId, userId);
       if (result.success) {
         setCartItems((prevItems) =>
-          prevItems.filter((item) => item.id !== itemId)
+          prevItems.filter((item) => item.cartId !== itemId)
         );
         Alert.alert("Success", result.message);
       } else {
@@ -90,74 +96,113 @@ const CartScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-          <Icon name="arrow-back" size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <Text style={[styles.headerText, { color: colors.text }]}>Giỏ hàng</Text>
-        <TouchableOpacity>
-          <Icon name="cart" size={24} color={colors.primary} />
-        </TouchableOpacity>
-      </View>
-      {loading ? (
-        <Loading />
-      ) : cartItems.length === 0 ? (
+      {user ? (
+        <>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+              <Icon name="arrow-back" size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <Text style={[styles.headerText, { color: colors.text }]}>
+              Giỏ hàng
+            </Text>
+            <TouchableOpacity onPress={() => fetchCartItems()}>
+              <Icon name="reload" size={24} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
+          {loading ? (
+            <Loading />
+          ) : cartItems.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={[styles.emptyText, { color: colors.secondary }]}>
+                Giỏ hàng của bạn đang trống
+              </Text>
+              <TouchableOpacity
+                style={styles.shopButton}
+                onPress={() => navigation.navigate("Home")}
+              >
+                <Text style={[styles.shopButtonText, { color: "#fff" }]}>
+                  Mua sắm ngay
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              <ScrollView style={styles.cartContainer}>
+                {cartItems.map((item) => (
+                  <View style={styles.itemContainer} key={item.cartId}>
+                    <Image
+                      source={{ uri: item.images[0] }}
+                      style={styles.bookImage}
+                    />
+                    <View style={styles.itemDetails}>
+                      <Text style={[styles.itemText, { color: colors.text }]}>
+                        {item.name}
+                      </Text>
+                      <Text
+                        style={[styles.itemText, { color: colors.primary }]}
+                      >
+                        {item.price.toLocaleString()} VND
+                      </Text>
+                      <View style={styles.quantityContainer}>
+                        <TouchableOpacity
+                          onPress={() => updateQuantity(item.cartId, -1)}
+                        >
+                          <Icon
+                            name="remove-circle-outline"
+                            size={24}
+                            color={colors.primary}
+                          />
+                        </TouchableOpacity>
+                        <Text style={styles.quantityText}>{item.quantity}</Text>
+                        <TouchableOpacity
+                          onPress={() => updateQuantity(item.cartId, 1)}
+                        >
+                          <Icon
+                            name="add-circle-outline"
+                            size={24}
+                            color={colors.primary}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => removeFromCart(item.cartId)}
+                    >
+                      <Icon name="trash" size={24} color={colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+              <View style={styles.totalContainer}>
+                <Text style={styles.totalText}>
+                  Tổng cộng: {totalCost.toLocaleString()} VND
+                </Text>
+                <TouchableOpacity
+                  style={styles.buttonContainer}
+                  onPress={() =>
+                    Alert.alert("Checkout", "Thanh toán thành công!")
+                  }
+                >
+                  <Text style={styles.buttonText}>Thanh Toán</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </>
+      ) : (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyText, { color: colors.secondary }]}>
-            Giỏ hàng của bạn đang trống
+            Bạn cần đăng nhập để xem giỏ hàng
           </Text>
           <TouchableOpacity
             style={styles.shopButton}
-            onPress={() => navigation.navigate("Home")}
+            onPress={() => navigation.navigate("BottomMain", { screen: "Profile" })}
           >
             <Text style={[styles.shopButtonText, { color: "#fff" }]}>
-              Mua sắm ngay
+              Đăng nhập
             </Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <>
-          <ScrollView style={styles.cartContainer}>
-            {cartItems.map((item) => (
-              <View style={styles.itemContainer} key={item.id}>
-                <Image source={{ uri: item.image }} style={styles.bookImage} />
-                <View style={styles.itemDetails}>
-                  <Text style={[styles.itemText, { color: colors.text }]}>
-                    {item.name}
-                  </Text>
-                  <Text style={[styles.itemText, { color: colors.primary }]}>
-                    {item.price.toLocaleString()} VND
-                  </Text>
-                  <View style={styles.quantityContainer}>
-                    <TouchableOpacity
-                      onPress={() => updateQuantity(item.id, -1)}
-                    >
-                      <Icon name="remove-circle-outline" size={24} color={colors.primary} />
-                    </TouchableOpacity>
-                    <Text style={styles.quantityText}>{item.quantity}</Text>
-                    <TouchableOpacity
-                      onPress={() => updateQuantity(item.id, 1)}
-                    >
-                      <Icon name="add-circle-outline" size={24} color={colors.primary} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-                  <Icon name="trash" size={24} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </ScrollView>
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalText}>Tổng cộng: {totalCost.toLocaleString()} VND</Text>
-            <TouchableOpacity
-              style={styles.buttonContainer}
-              onPress={() => Alert.alert("Checkout", "Thanh toán thành công!")}
-            >
-              <Text style={styles.buttonText}>Thanh Toán</Text>
-            </TouchableOpacity>
-          </View>
-        </>
       )}
     </SafeAreaView>
   );

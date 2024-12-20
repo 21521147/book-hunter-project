@@ -16,6 +16,7 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 import { UserContext } from "../../contexts/UserContext";
 import cartService from "../../services/cartService";
 import Icon from "react-native-vector-icons/Ionicons";
+import authService from "../../services/authService";
 
 const ItemDetails = () => {
   const route = useRoute();
@@ -40,18 +41,36 @@ const ItemDetails = () => {
       }
     };
 
+    const checkIfInCart = async () => {
+      try{
+        const userInfo = await authService.getUserInfo(user.id);
+        if(userInfo && userInfo.cart){
+          const items = await cartService.getCartItems(userInfo.cart);
+          const item = items.find(item => item.id === bookId);
+          if(item){
+            setButtonText("Added to Cart");
+          }
+        }
+      }catch(error){
+        console.error("Error checking if book is in cart:", error);
+      }
+    };
+
     fetchBookDetails();
+    if(user){
+      checkIfInCart();
+    }
   }, [bookId]);
 
   const addToCart = async () => {
     try {
       if (!user) {
         Alert.alert(
-          "Sign In Required",
-          "You must be signed in to add items to the cart.",
+          "Bạn chưa đăng nhập",
+          "Bạn cần đăng nhập để thêm sách vào giỏ hàng.",
           [
             {
-              text: "Sign In",
+              text: "Đăng nhập",
               onPress: () =>
                 navigation.navigate("BottomMain", { screen: "Profile" }),
             },
