@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { ThemeContext } from "../contexts/ThemeContext";
 
 const BookBox = ({ item, navigation }) => {
+  const { colors } = useContext(ThemeContext);
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, {backgroundColor: colors.card}]}
       onPress={() => {
         navigation.navigate("ItemDetails", { bookId: item.id });
       }}
@@ -32,7 +34,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: "#fff",
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

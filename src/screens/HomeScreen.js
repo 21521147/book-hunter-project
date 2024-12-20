@@ -18,12 +18,12 @@ const HomeScreen = ({ navigation }) => {
   const [selectedGenre, setSelectedGenre] = useState("Tất cả");
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
       <View style={styles.container}>
         <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <Image
             source={require("../../assets/playstore-icon.png")}
-            style={{ width: 80, height: 80 }}
+            style={{ width: 70, height: 70 , borderRadius: 50, marginRight: 10}}
           />
           <Text
             style={[
@@ -72,11 +72,9 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",

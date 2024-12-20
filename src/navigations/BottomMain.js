@@ -31,10 +31,10 @@ const BottomMain = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarBackgroundColor: 'red',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.secondary,
         tabBarLabelStyle: { fontSize: fontSizes.small },
+        tabBarStyle: { backgroundColor: colors.background },
       }}
     >
       <Tab.Screen
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     top: -3,
     backgroundColor: "red",
     borderRadius: 6,
-    width: 12,
-    height: 12,
+    width: 14,
+    height: 14,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -13,7 +13,7 @@ const InputBox = ({
   const { colors, fontSizes } = useContext(ThemeContext);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }]}>
+    <View style={[styles.container, { backgroundColor: colors.cardSrd }]}>
       <Icon name={icon} size={20} color={colors.primary} />
       <TextInput
         placeholder={placeholder}
@@ -21,7 +21,7 @@ const InputBox = ({
           styles.textInput,
           { color: colors.text, fontSize: fontSizes.medium },
         ]}
-        placeholderTextColor={colors.secondary}
+        placeholderTextColor={colors.textSrd}
         secureTextEntry={secureTextEntry}
         onChangeText={onChangeText}
         value={value}

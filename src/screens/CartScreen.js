@@ -133,10 +133,10 @@ const CartScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
       {user ? (
         <>
-          <View style={styles.header}>
+          <View style={[styles.header, {backgroundColor: colors.background}]}>
             <TouchableOpacity onPress={() => navigation.navigate("Home")}>
               <Icon name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
@@ -165,9 +165,9 @@ const CartScreen = ({ navigation }) => {
             </View>
           ) : (
             <>
-              <ScrollView style={styles.cartContainer}>
+              <ScrollView style={[styles.cartContainer, {backgroundColor: colors.background}]}>
                 {cartItems.map((item) => (
-                  <View style={styles.itemContainer} key={item.cartId}>
+                  <View style={[styles.itemContainer, {backgroundColor: colors.background}]} key={item.cartId}>
                     <Image
                       source={{ uri: item.images[0] }}
                       style={styles.bookImage}
@@ -188,7 +188,7 @@ const CartScreen = ({ navigation }) => {
                         >
                           <Icon name="remove" size={20} color={colors.primary} />
                         </TouchableOpacity>
-                        <Text style={styles.quantityText}>{item.quantity}</Text>
+                        <Text style={[styles.quantityText, {color: colors.text}]}>{item.quantity}</Text>
                         <TouchableOpacity
                           style={styles.quantityButton}
                           onPress={() => updateQuantity(item.cartId, 1)}
@@ -205,9 +205,9 @@ const CartScreen = ({ navigation }) => {
                   </View>
                 ))}
               </ScrollView>
-              <View style={styles.totalContainer}>
+              <View style={[styles.totalContainer, {backgroundColor: colors.background}]}>
                 <View>
-                  <Text style={styles.totalLabel}>Thành tiền:</Text>
+                  <Text style={[styles.totalLabel, {color: colors.text}]}>Thành tiền:</Text>
                   <Text style={[styles.totalAmount, { color: '#FF6600' }]}>
                     {totalCost.toLocaleString()} VND
                   </Text>
@@ -244,14 +244,12 @@ const CartScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#f8f9fa",
   },
   headerText: {
     fontSize: 20,
@@ -260,7 +258,6 @@ const styles = StyleSheet.create({
   cartContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#fffafa",
   },
   itemContainer: {
     flexDirection: "row",
@@ -293,13 +290,11 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     padding: 10,
-    backgroundColor: "#f0f0f0",
   },
   quantityText: {
     fontSize: 16,
     fontWeight: "bold",
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
     textAlign: "center",
     flex: 1,
   },
@@ -330,7 +325,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#ccc",
-    backgroundColor: "#fff",
   },
   totalLabel: {
     fontSize: 18,

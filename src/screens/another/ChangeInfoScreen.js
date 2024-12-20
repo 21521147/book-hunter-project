@@ -72,10 +72,10 @@ const ChangeInfoScreen = ({ navigation }) => {
           >
             Sửa thông tin
           </Text>
-          <View style={{ width: 25 }} /> {/* Placeholder to center the text */}
+          <View style={{ width: 25 }} />
         </View>
 
-        <TouchableOpacity onPress={handlePickImage} style={styles.imageContainer}>
+        <TouchableOpacity onPress={handlePickImage} style={[styles.imageContainer, {backgroundColor: colors.background}]}>
           <Image
             source={profilePicture ? { uri: profilePicture } : require("../../../assets/default-profile.png")}
             style={styles.profileImage}

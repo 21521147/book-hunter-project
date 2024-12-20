@@ -67,7 +67,7 @@ const SearchScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -135,7 +135,6 @@ const SearchScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
   },
   container: {
     flex: 1,
