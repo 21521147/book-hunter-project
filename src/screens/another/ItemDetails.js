@@ -366,12 +366,11 @@ const styles = StyleSheet.create({
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 5,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
     overflow: "hidden",
-    width: 120,
+    width:250,
   },
   quantityButton: {
     padding: 10,
@@ -386,9 +385,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addToCartButton: {
-    marginVertical: 5,
+    marginLeft: 10,
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     alignItems: "center",
   },
   addToCartButtonText: {
