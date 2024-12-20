@@ -186,12 +186,12 @@ const ItemDetails = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, {backgroundColor: colors.background}]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color={colors.primary} />
           </TouchableOpacity>
@@ -262,7 +262,7 @@ const ItemDetails = () => {
           )}
         </View>
       </ScrollView>
-      <View style={styles.footer}>
+      <View style={[styles.footer, {backgroundColor: colors.background}]}>
         <TouchableOpacity onPress={toggleFavorite} style={styles.heartButton}>
           <Icon
             name="heart"
@@ -270,17 +270,17 @@ const ItemDetails = () => {
             color={isFavorite ? "red" : colors.secondary}
           />
         </TouchableOpacity>
-        <View style={styles.quantityContainer}>
+        <View style={[styles.quantityContainer, {backgroundColor: colors.background}]}>
           <TouchableOpacity
             onPress={decrementQuantity}
-            style={styles.quantityButton}
+            style={[styles.quantityButton, {backgroundColor: colors.background}]}
           >
             <Icon name="remove" size={20} color={colors.primary} />
           </TouchableOpacity>
-          <Text style={styles.quantityText}>{quantity}</Text>
+          <Text style={[styles.quantityText, {color: colors.text}]}>{quantity}</Text>
           <TouchableOpacity
             onPress={incrementQuantity}
-            style={styles.quantityButton}
+            style={[styles.quantityButton, {backgroundColor: colors.background}]}
           >
             <Icon name="add" size={20} color={colors.primary} />
           </TouchableOpacity>
@@ -329,7 +329,6 @@ const ItemDetails = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   loadingContainer: {
     flex: 1,
@@ -341,7 +340,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
-    backgroundColor: "#f8f9fa",
   },
   headerIcons: {
     flexDirection: "row",
@@ -373,13 +371,12 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     padding: 10,
-    backgroundColor: "#f0f0f0",
+
   },
   quantityText: {
     fontSize: 16,
     fontWeight: "bold",
     paddingHorizontal: 10,
-    backgroundColor: "#fff",
     textAlign: "center",
     flex: 1,
   },
@@ -400,7 +397,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#ccc",
-    backgroundColor: "#fff",
   },
   modalContainer: {
     flex: 1,

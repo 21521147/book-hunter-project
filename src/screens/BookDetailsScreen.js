@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { ThemeContext } from "../contexts/ThemeContext";
 import bookService from "../services/bookService";
+import Loading from "../components/Loading";
 
 const BookDetailsScreen = ({ route }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
@@ -25,15 +26,13 @@ const BookDetailsScreen = ({ route }) => {
   }, [bookId]);
 
   if (!book) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={{ color: colors.text }}>Loading...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+    >
       <ScrollView style={styles.container}>
         <Image source={{ uri: book.images[0] }} style={styles.bookImage} />
         <Text style={[styles.title, { color: colors.text }]}>{book.name}</Text>
@@ -54,7 +53,6 @@ const BookDetailsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   container: {
     flex: 1,

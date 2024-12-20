@@ -72,7 +72,7 @@ const FavoriteScreen = ({ navigation }) => {
 
   if (favorites.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
+      <View style={[styles.emptyContainer, {backgroundColor: colors.background}]}>
         <Text style={[styles.emptyText, { color: colors.secondary }]}>
           Bạn chưa có sách yêu thích
         </Text>
@@ -81,7 +81,7 @@ const FavoriteScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
