@@ -173,33 +173,27 @@ const CartScreen = ({ navigation }) => {
                       style={styles.bookImage}
                     />
                     <View style={styles.itemDetails}>
-                      <Text style={[styles.itemText, { color: colors.text }]}>
+                      <Text style={[styles.itemText, { color: colors.text, lineHeight: 24 }]}>
                         {item.name}
                       </Text>
                       <Text
-                        style={[styles.itemText, { color: colors.primary }]}
+                        style={[styles.itemText, { color: colors.primary, lineHeight: 24 }]}
                       >
                         {item.price.toLocaleString()} VND
                       </Text>
                       <View style={styles.quantityContainer}>
                         <TouchableOpacity
+                          style={styles.quantityButton}
                           onPress={() => updateQuantity(item.cartId, -1)}
                         >
-                          <Icon
-                            name="remove-circle-outline"
-                            size={24}
-                            color={colors.primary}
-                          />
+                          <Icon name="remove" size={20} color={colors.primary} />
                         </TouchableOpacity>
                         <Text style={styles.quantityText}>{item.quantity}</Text>
                         <TouchableOpacity
+                          style={styles.quantityButton}
                           onPress={() => updateQuantity(item.cartId, 1)}
                         >
-                          <Icon
-                            name="add-circle-outline"
-                            size={24}
-                            color={colors.primary}
-                          />
+                          <Icon name="add" size={20} color={colors.primary} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -265,6 +259,7 @@ const styles = StyleSheet.create({
   },
   cartContainer: {
     flex: 1,
+    padding: 10,
     backgroundColor: "#fffafa",
   },
   itemContainer: {
@@ -284,16 +279,29 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
+    lineHeight: 24,
   },
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    overflow: "hidden",
+    width: 120,
+  },
+  quantityButton: {
+    padding: 10,
+    backgroundColor: "#f0f0f0",
   },
   quantityText: {
-    marginHorizontal: 10,
     fontSize: 16,
     fontWeight: "bold",
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    textAlign: "center",
+    flex: 1,
   },
   emptyContainer: {
     flex: 1,
