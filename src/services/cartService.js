@@ -8,7 +8,6 @@ import {
   arrayUnion,
   arrayRemove,
   deleteDoc,
-  
 } from "firebase/firestore";
 
 const CART_COLLECTION = "carts";

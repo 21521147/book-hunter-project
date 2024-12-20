@@ -11,7 +11,7 @@ const App = () => {
       <UserContextProvider>
         <ThemeProvider>
           <NavigationContainer> 
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="dark-content" />
             <StackNav />
           </NavigationContainer>
         </ThemeProvider>

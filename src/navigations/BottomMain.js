@@ -31,6 +31,7 @@ const BottomMain = () => {
   return (
     <Tab.Navigator
       screenOptions={{
+        tabBarBackgroundColor: 'red',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.secondary,
         tabBarLabelStyle: { fontSize: fontSizes.small },
