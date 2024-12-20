@@ -72,6 +72,7 @@ const ChangeInfoScreen = ({ navigation }) => {
           >
             Sửa thông tin
           </Text>
+          <View style={{ width: 25 }} /> {/* Placeholder to center the text */}
         </View>
 
         <TouchableOpacity onPress={handlePickImage} style={styles.imageContainer}>
@@ -145,7 +146,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
     marginBottom: 20,
@@ -156,8 +156,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   icon: {
-    position: "absolute",
-    left: 0,
     padding: 10,
   },
   title: {
