@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderColor: "#000",
-    borderWidth: 1,
+    borderWidth: 0,
   }
 });
 

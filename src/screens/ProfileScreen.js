@@ -133,7 +133,7 @@ const ProfileScreen = ({ navigation, route }) => {
           <IconBox
             icon="cart-outline"
             text="Thông tin giỏ hàng"
-            targetScreen="ChangeInfoScreen"
+            targetScreen="Cart"
           />
         </View>
 
@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
     paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   headerText: {
     marginLeft: 10,
