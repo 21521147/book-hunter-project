@@ -8,6 +8,9 @@ import {
   where,
   limit,
   orderBy,
+  arrayUnion,
+  updateDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -121,6 +124,50 @@ const bookService = {
       return books;
     } catch (error) {
       console.error("Error fetching all books: ", error);
+      throw error;
+    }
+  },
+
+  saveFavorites: async (userId, bookId) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        savedItems: arrayUnion(bookId),
+      });
+      return { success: true, message: "Book saved to favorites!" };
+    } catch (error) {
+      console.error("Error saving book to favorites:", error);
+      return { success: false, message: "Failed to save book to favorites." };
+    }
+  },
+
+  removeFavorites: async (userId, bookId) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        savedItems: arrayRemove(bookId),
+      });
+      return { success: true, message: "Book removed from favorites!" };
+    } catch (error) {
+      console.error("Error removing book from favorites:", error);
+      return {
+        success: false,
+        message: "Failed to remove book from favorites.",
+      };
+    }
+  },
+
+  getAllFavorites: async (userId) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) {
+        return userDoc.data().savedItems;
+      } else {
+        throw new Error("User not found");
+      }
+    } catch (error) {
+      console.error("Error fetching favorites: ", error);
       throw error;
     }
   },

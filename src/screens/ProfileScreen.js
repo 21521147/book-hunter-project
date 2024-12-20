@@ -128,7 +128,7 @@ const ProfileScreen = ({ navigation, route }) => {
           <IconBox
             icon="heart-outline"
             text="Sản phẩm yêu thích"
-            targetScreen="ChangeInfoScreen"
+            targetScreen="FavoriteScreen"
           />
           <IconBox
             icon="cart-outline"

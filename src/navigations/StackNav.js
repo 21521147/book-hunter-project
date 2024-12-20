@@ -5,6 +5,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import ChangeInfoScreen from "../screens/another/ChangeInfoScreen";
 import EventScreen from "../screens/another/EventScreen";
 import ItemDetails from "../screens/another/ItemDetails";
+import FavoriteScreen from "../screens/another/FavoriteScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,11 @@ const StackNav = () => {
       <Stack.Screen
         name="ItemDetails"
         component={ItemDetails}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="FavoriteScreen"
+        component={FavoriteScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

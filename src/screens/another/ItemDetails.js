@@ -25,6 +25,7 @@ const ItemDetails = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [buttonText, setButtonText] = useState("Add to Cart");
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
@@ -42,22 +43,29 @@ const ItemDetails = () => {
     };
 
     const checkIfInCart = async () => {
-      try{
+      try {
         const userInfo = await authService.getUserInfo(user.id);
-        if(userInfo && userInfo.cart){
-          const items = await cartService.getCartItems(userInfo.cart);
-          const item = items.find(item => item.id === bookId);
-          if(item){
+        if (userInfo && userInfo.cart) {
+          const cartItems = await cartService.getCartItems(userInfo.cart);
+          const bookIdsInCart = cartItems.map((item) => item.id);
+          if (bookIdsInCart.includes(bookId)) {
             setButtonText("Added to Cart");
           }
         }
-      }catch(error){
+        if (
+          userInfo &&
+          userInfo.savedItems &&
+          userInfo.savedItems.includes(bookId)
+        ) {
+          setIsFavorite(true);
+        }
+      } catch (error) {
         console.error("Error checking if book is in cart:", error);
       }
     };
 
     fetchBookDetails();
-    if(user){
+    if (user) {
       checkIfInCart();
     }
   }, [bookId]);
@@ -99,6 +107,51 @@ const ItemDetails = () => {
     } catch (error) {
       console.error("Error adding book to cart:", error);
       Alert.alert("Error", "Failed to add book to cart.");
+    }
+  };
+
+  const toggleFavorite = async () => {
+    try {
+      if (!user) {
+        Alert.alert(
+          "Bạn chưa đăng nhập",
+          "Bạn cần đăng nhập để thêm sách vào giỏ hàng.",
+          [
+            {
+              text: "Đăng nhập",
+              onPress: () =>
+                navigation.navigate("BottomMain", { screen: "Profile" }),
+            },
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+          ],
+          { cancelable: false }
+        );
+        return;
+      }
+
+      if (isFavorite) {
+        const result = await bookService.removeFavorites(user.id, book.id);
+        if (result.success) {
+          setIsFavorite(false);
+          Alert.alert("Thành công", "Đã xóa khỏi mục yêu thích!");
+        } else {
+          Alert.alert("Lỗi", result.message);
+        }
+      } else {
+        const result = await bookService.saveFavorites(user.id, book.id);
+        if (result.success) {
+          setIsFavorite(true);
+          Alert.alert("Thành công", "Đã thêm vào mục yêu thích!");
+        } else {
+          Alert.alert("Lỗi", result.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      Alert.alert("Error", "Failed to toggle favorite.");
     }
   };
 
@@ -191,6 +244,13 @@ const ItemDetails = () => {
         </View>
       </ScrollView>
       <View style={styles.footer}>
+        <TouchableOpacity onPress={toggleFavorite} style={styles.heartButton}>
+          <Icon
+            name="heart"
+            size={35}
+            color={isFavorite ? colors.primary : colors.secondary}
+          />
+        </TouchableOpacity>
         <View style={styles.quantityContainer}>
           <TouchableOpacity
             onPress={decrementQuantity}
@@ -205,24 +265,27 @@ const ItemDetails = () => {
           >
             <Text style={styles.quantityButtonText}>+</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.addToCartButton,
+              {
+                backgroundColor:
+                  buttonText === "Added to Cart"
+                    ? colors.secondary
+                    : colors.primary,
+              },
+            ]}
+            onPress={addToCart}
+            disabled={buttonText === "Added to Cart"}
+          >
+            <Text
+              style={[styles.addToCartButtonText, { color: colors.textSrd }]}
+            >
+              {buttonText}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[
-            styles.addToCartButton,
-            {
-              backgroundColor:
-                buttonText === "Added to Cart"
-                  ? colors.secondary
-                  : colors.primary,
-            },
-          ]}
-          onPress={addToCart}
-          disabled={buttonText === "Added to Cart"}
-        >
-          <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
-            {buttonText}
-          </Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -314,6 +377,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     borderTopWidth: 1,
+  },
+  heartButton: {
+    padding: 5,
   },
 });
 
