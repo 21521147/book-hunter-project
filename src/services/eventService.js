@@ -10,7 +10,7 @@ export const useFetchEvents = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "event"));
+        const querySnapshot = await getDocs(collection(db, "events"));
         const eventsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

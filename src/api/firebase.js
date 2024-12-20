@@ -12,12 +12,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyA2oZ7KcNa7Be9agiyDfaCOtglBD7XwDQA",
-  authDomain: "book-hunter-bh2152.firebaseapp.com",
-  projectId: "book-hunter-bh2152",
-  storageBucket: "book-hunter-bh2152.firebasestorage.app",
-  messagingSenderId: "1030001998948",
-  appId: "1:1030001998948:web:1395733f7728159fdbf371",
+  apiKey: "AIzaSyC71zZq5Ff11kEXrX4kqggQLBZvzqBS838",
+  authDomain: "book-hunter-2.firebaseapp.com",
+  projectId: "book-hunter-2",
+  storageBucket: "book-hunter-2.firebasestorage.app",
+  messagingSenderId: "1084183247375",
+  appId: "1:1084183247375:web:4bb79a2ead39f1f64d017a",
 };
 
 // Initialize Firebase
