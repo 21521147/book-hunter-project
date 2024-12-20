@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
   SafeAreaView,
-  ScrollView,
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -60,76 +59,74 @@ const ChangeInfoScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.icon} onPress={() => navigation.goBack()}>
-              <Icon name="arrow-back" size={25} color={colors.primary} />
-            </TouchableOpacity>
-            <Text
-              style={[
-                styles.title,
-                { color: colors.primary, fontSize: fontSizes.xLarge },
-              ]}
-            >
-              Sửa thông tin
-            </Text>
-          </View>
-
-          <TouchableOpacity onPress={handlePickImage} style={styles.imageContainer}>
-            <Image
-              source={profilePicture ? { uri: profilePicture } : require("../../../assets/default-profile.png")}
-              style={styles.profileImage}
-            />
-            <Text style={[styles.title,{color: colors.primary, marginBottom: 10 }]}>Thay đổi ảnh đại diện</Text>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.icon} onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={25} color={colors.primary} />
           </TouchableOpacity>
-
-          <InputBox
-            icon="person"
-            placeholder="Tên người dùng"
-            value={name}
-            onChangeText={setName}
-            style={styles.input}
-          />
-          <InputBox
-            icon="mail"
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-          />
-          <InputBox
-            icon="call"
-            placeholder="Số điện thoại"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            style={styles.input}
-          />
-          <InputBox
-            icon="home"
-            placeholder="Địa chỉ"
-            value={address}
-            onChangeText={setAddress}
-            style={styles.input}
-          />
-
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
-            onPress={handleUpdate}
-            disabled={loading}
+          <Text
+            style={[
+              styles.headerText,
+              { color: colors.Text, fontSize: fontSizes.large },
+            ]}
           >
-            <Text
-              style={{
-                fontSize: fontSizes.medium,
-                color: "#fff",
-                textAlign: "center",
-              }}
-            >
-              Cập nhật
-            </Text>
-          </TouchableOpacity>
+            Sửa thông tin
+          </Text>
         </View>
-      </ScrollView>
+
+        <TouchableOpacity onPress={handlePickImage} style={styles.imageContainer}>
+          <Image
+            source={profilePicture ? { uri: profilePicture } : require("../../../assets/default-profile.png")}
+            style={styles.profileImage}
+          />
+          <Text style={[styles.title,{color: colors.primary, marginBottom: 10 }]}>Thay đổi ảnh đại diện</Text>
+        </TouchableOpacity>
+
+        <InputBox
+          icon="person"
+          placeholder="Tên người dùng"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+        />
+        <InputBox
+          icon="mail"
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+        <InputBox
+          icon="call"
+          placeholder="Số điện thoại"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          style={styles.input}
+        />
+        <InputBox
+          icon="home"
+          placeholder="Địa chỉ"
+          value={address}
+          onChangeText={setAddress}
+          style={styles.input}
+        />
+
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.primary }]}
+          onPress={handleUpdate}
+          disabled={loading}
+        >
+          <Text
+            style={{
+              fontSize: fontSizes.medium,
+              color: "#fff",
+              textAlign: "center",
+            }}
+          >
+            Cập nhật
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -140,11 +137,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -153,9 +145,12 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
     marginBottom: 20,
+  },
+  headerText: {
+    fontWeight: "bold",
   },
   icon: {
     marginRight: 10,
