@@ -132,8 +132,8 @@ const ProfileScreen = ({ navigation, route }) => {
           />
           <IconBox
             icon="cart-outline"
-            text="Thông tin giỏ hàng"
-            targetScreen="Cart"
+            text="Xem thông tin đơn hàng"
+            targetScreen="OrderInfoScreen"
           />
         </View>
 
