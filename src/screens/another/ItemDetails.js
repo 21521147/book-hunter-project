@@ -267,7 +267,7 @@ const ItemDetails = () => {
           <Icon
             name="heart"
             size={35}
-            color={isFavorite ? colors.primary : colors.secondary}
+            color={isFavorite ? "red" : colors.secondary}
           />
         </TouchableOpacity>
         <View style={styles.quantityContainer}>
@@ -284,27 +284,26 @@ const ItemDetails = () => {
           >
             <Icon name="add" size={20} color={colors.primary} />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.addToCartButton,
-              {
-                backgroundColor:
-                  buttonText === "Added to Cart"
-                    ? colors.secondary
-                    : colors.primary,
-              },
-            ]}
-            onPress={addToCart}
-            disabled={buttonText === "Added to Cart"}
-          >
-            <Text
-              style={[styles.addToCartButtonText, { color: colors.textSrd }]}
-            >
-              {buttonText}
-            </Text>
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          style={[
+            styles.addToCartButton,
+            {
+              backgroundColor:
+                buttonText === "Added to Cart"
+                  ? colors.secondary
+                  : colors.primary,
+            },
+          ]}
+          onPress={addToCart}
+          disabled={buttonText === "Added to Cart"}
+        >
+          <Text
+            style={[styles.addToCartButtonText, { color: colors.textSrd }]}
+          >
+            {buttonText}
+          </Text>
+        </TouchableOpacity>
       </View>
       {selectedImage && (
         <Modal
@@ -370,7 +369,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     overflow: "hidden",
-    width:250,
+    width: 150,
   },
   quantityButton: {
     padding: 10,
