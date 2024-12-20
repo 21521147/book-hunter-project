@@ -67,7 +67,7 @@ const ChangeInfoScreen = ({ navigation }) => {
           <Text
             style={[
               styles.headerText,
-              { color: colors.Text, fontSize: fontSizes.large },
+              { color: colors.text, fontSize: fontSizes.large },
             ]}
           >
             Sửa thông tin
@@ -145,15 +145,20 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
     marginBottom: 20,
   },
   headerText: {
+    flex: 1,
+    textAlign: "center",
     fontWeight: "bold",
   },
   icon: {
-    marginRight: 10,
+    position: "absolute",
+    left: 0,
+    padding: 10,
   },
   title: {
     fontWeight: "bold",
