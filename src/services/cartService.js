@@ -60,10 +60,28 @@ const removeFromCart = async (itemId, userId) => {
   }
 };
 
+const updateCartItemQuantity = async (itemId, change) => {
+  try {
+    const cartItemRef = doc(db, CART_COLLECTION, itemId);
+    const cartItemDoc = await getDoc(cartItemRef);
+    if (cartItemDoc.exists()) {
+      const newQuantity = Math.max(1, cartItemDoc.data().quantity + change);
+      await updateDoc(cartItemRef, { quantity: newQuantity });
+      return { success: true, message: "Quantity updated!" };
+    } else {
+      return { success: false, message: "Item not found in cart." };
+    }
+  } catch (error) {
+    console.error("Error updating cart item quantity:", error);
+    return { success: false, message: "Failed to update quantity." };
+  }
+};
+
 const cartService = {
   getCartItems,
   addToCart,
   removeFromCart,
+  updateCartItemQuantity,
 };
 
 export default cartService;
