@@ -1,71 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../api/firebase"; // Adjust the import according to your project structure
+import Loading from "../../components/Loading";
+import eventService from "../../services/eventService";
 
 const EventScreen = () => {
   const route = useRoute();
   const { eventId } = route.params;
   const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const eventRef = doc(db, "event", eventId);
-        const eventDoc = await getDoc(eventRef);
-        if (eventDoc.exists()) {
-          setEvent(eventDoc.data());
+        console.log("Fetching event with ID:", eventId);
+        const eventData = await eventService.getById(eventId);
+        if (eventData) {
+          setEvent(eventData);
         } else {
-          console.log("No such document!");
+          console.log("Đang cập nhật");
         }
       } catch (error) {
         console.error("Error fetching event:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvent();
   }, [eventId]);
 
+  if (loading) {
+    return <Loading />;
+  }
+
   if (!event) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
+      <View style={styles.container}>
+        <Text>No event found</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.idText}>Event ID: {eventId}</Text>
-      <Image source={{ uri: event.banner }} style={styles.image} />
+      <Text style={styles.title}>{event.title}</Text>
+      <Image source={{ uri: event.image }} style={styles.image} />
+      <Text style={styles.description}>{event.description}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 16,
+    backgroundColor: "#fff",
   },
-  idText: {
-    fontSize: 18,
-    marginBottom: 20,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
   },
   image: {
-    width: "90%",
-    aspectRatio: 16 / 9,
+    width: "100%",
+    height: 200,
     resizeMode: "cover",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#222",
+    marginBottom: 16,
+  },
+  description: {
+    fontSize: 16,
   },
 });
 

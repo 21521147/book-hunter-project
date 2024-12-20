@@ -9,15 +9,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFetchEvents } from "../services/eventService";
+import eventService from "../services/eventService";
 import { ThemeContext } from "../contexts/ThemeContext";
 import Loading from "./Loading";
 
 const { width: viewportWidth } = Dimensions.get("window");
 
 const Slider = ({ navigation }) => {
-  const { events: fetchedEvents, loading } = useFetchEvents();
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { colors } = useContext(ThemeContext);
@@ -28,17 +28,20 @@ const Slider = ({ navigation }) => {
         const cachedEvents = await AsyncStorage.getItem("events");
         if (cachedEvents) {
           setEvents(JSON.parse(cachedEvents));
-        } else if (fetchedEvents.length > 0) {
+        } else {
+          const fetchedEvents = await eventService.getAll();
           setEvents(fetchedEvents);
           await AsyncStorage.setItem("events", JSON.stringify(fetchedEvents));
         }
       } catch (error) {
         console.error("Error fetching events: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [fetchedEvents]);
+  }, []);
 
   useEffect(() => {
     if (scrollViewRef.current && events.length > 0) {
@@ -77,16 +80,14 @@ const Slider = ({ navigation }) => {
   };
 
   if (loading || events.length === 0) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   // Create a "looped" list with cloned first and last images
   const loopedEvents = [
     { ...events[events.length - 1] }, // Clone of the last image
     ...events,
-    { ...events[0] }, 
+    { ...events[0] },
   ];
 
   return (
@@ -121,7 +122,9 @@ const Slider = ({ navigation }) => {
               key={index}
               style={[
                 styles.dot,
-                isActive ? { backgroundColor: colors.primary } : styles.inactiveDot,
+                isActive
+                  ? { backgroundColor: colors.primary }
+                  : styles.inactiveDot,
               ]}
             />
           );
