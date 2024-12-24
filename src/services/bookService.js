@@ -74,6 +74,27 @@ const bookService = {
     }
   },
 
+  getBooksByGenre: async (genre) => {
+    try {
+      let q;
+      if (genre === "Tất cả") {
+        q = booksCollection;
+      } else {
+        q = query(booksCollection, where("genre", "==", genre));
+      }
+      console.log('q', q)
+      const querySnapshot = await getDocs(q);
+      const books = [];
+      querySnapshot.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+      });
+      return books;
+    } catch (error) {
+      console.error("Error fetching books by genre: ", error);
+      throw error;
+    }
+  },
+
   getTop10BooksByRatingAvg: async () => {
     try {
       const q = query(

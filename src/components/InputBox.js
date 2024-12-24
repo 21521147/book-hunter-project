@@ -21,7 +21,7 @@ const InputBox = ({
           styles.textInput,
           { color: colors.text, fontSize: fontSizes.medium },
         ]}
-        placeholderTextColor={colors.textSrd}
+        placeholderTextColor={colors.textsrd}
         secureTextEntry={secureTextEntry}
         onChangeText={onChangeText}
         value={value}
