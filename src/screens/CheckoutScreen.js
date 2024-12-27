@@ -15,6 +15,7 @@ import { UserContext } from "../contexts/UserContext";
 import { CartContext } from "../contexts/CartContext";
 import bookService from "../services/bookService";
 import Icon from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import orderService from "../services/orderService";
 import cartService from "../services/cartService";
 
@@ -28,6 +29,7 @@ const CheckoutScreen = ({ navigation, route }) => {
   const [shippingMethod, setShippingMethod] = useState("Tiêu chuẩn");
   const [paymentMethod, setPaymentMethod] = useState("Thẻ tín dụng");
   const [books, setBooks] = useState([]);
+  const [shippingCost, setShippingCost] = useState(30000);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -40,6 +42,14 @@ const CheckoutScreen = ({ navigation, route }) => {
     fetchBookDetails();
   }, [bookIds]);
 
+  useEffect(() => {
+    if (shippingMethod === "Tiêu chuẩn") {
+      setShippingCost(30000);
+    } else if (shippingMethod === "Nhanh") {
+      setShippingCost(50000);
+    }
+  }, [shippingMethod]);
+
   const handlePlaceOrder = async () => {
     if (!address) {
       Alert.alert("Lỗi", "Vui lòng nhập địa chỉ của bạn.");
@@ -50,7 +60,7 @@ const CheckoutScreen = ({ navigation, route }) => {
       const order = {
         date: new Date().toISOString(),
         status: "Đang giao hàng",
-        price: totalCost,
+        price: totalCost + shippingCost,
         address: address,
         shippingMethod: shippingMethod,
         paymentMethod: paymentMethod,
@@ -81,11 +91,10 @@ const CheckoutScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
-            <Icon name="location-outline" size={20} color={colors.primary} />
+            <Icon name="location" size={20} color={colors.primary} />
             <Text style={[styles.infoText, { color: colors.text }]}>{user.name}</Text>
-            <Text style={[styles.infoText, { color: colors.text }]}> - {user.phoneNumber}</Text>
+            <Text style={[styles.medium, { color: colors.text }]}> (+84) {user.phoneNumber}</Text>
           </View>
-          <Text style={[styles.label, { color: colors.text }]}>Địa chỉ:</Text>
           <TextInput
             style={[styles.input, { color: colors.text, borderColor: colors.border }]}
             placeholder="Nhập địa chỉ của bạn"
@@ -109,59 +118,71 @@ const CheckoutScreen = ({ navigation, route }) => {
             ))}
           </View>
         )}
-        <View style={styles.totalContainer}>
-          <Text style={[styles.totalLabel, { color: colors.text }]}>Tổng số tiền:</Text>
-          <Text style={[styles.totalAmount, { color: colors.primary }]}>{totalCost ? totalCost.toLocaleString() : "N/A"} VND</Text>
-        </View>
         <View style={styles.stepContainer}>
-          <Text style={[styles.label, { color: colors.text }]}>Phương thức vận chuyển:</Text>
+          <Text style={[styles.label, { color: colors.text, textAlign: "left" }]}>Phương thức vận chuyển:</Text>
           <TouchableOpacity
-            style={[styles.option, shippingMethod === "Tiêu chuẩn" && styles.selectedOption]}
+            style={[styles.option, shippingMethod === "Tiêu chuẩn" && styles.selectedOption, { borderColor: "green" }]}
             onPress={() => setShippingMethod("Tiêu chuẩn")}
           >
-            <Text style={{ color: colors.text }}>Tiêu chuẩn</Text>
+            <MaterialCommunityIcons name="motorbike" size={24} color="green" />
+            <Text style={[styles.optionText, { color: "green", textAlign: "left" }]}>Tiêu chuẩn (30,000 VND)</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.option, shippingMethod === "Nhanh" && styles.selectedOption]}
+            style={[styles.option, shippingMethod === "Nhanh" && styles.selectedOption, { borderColor: "orange" }]}
             onPress={() => setShippingMethod("Nhanh")}
           >
-            <Text style={{ color: colors.text }}>Nhanh</Text>
+            <Icon name="rocket" size={20} color="orange" />
+            <Text style={[styles.optionText, { color: "orange", textAlign: "left" }]}>Nhanh (50,000 VND)</Text>
           </TouchableOpacity>
-          <Text style={[styles.label, { color: colors.text }]}>Phương thức thanh toán:</Text>
+          <Text style={[styles.label, { color: colors.text, textAlign: "left" }]}>Phương thức thanh toán:</Text>
           <TouchableOpacity
             style={[styles.option, paymentMethod === "Thẻ tín dụng" && styles.selectedOption]}
             onPress={() => setPaymentMethod("Thẻ tín dụng")}
           >
-            <Text style={{ color: colors.text }}>Thẻ tín dụng</Text>
+            <Icon name="card" size={20} color={colors.primary} />
+            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>Thẻ tín dụng</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.option, paymentMethod === "PayPal" && styles.selectedOption]}
             onPress={() => setPaymentMethod("PayPal")}
           >
-            <Text style={{ color: colors.text }}>PayPal</Text>
+            <Icon name="logo-paypal" size={20} color={colors.primary} />
+            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>PayPal</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.option, paymentMethod === "Thanh toán khi nhận hàng" && styles.selectedOption]}
             onPress={() => setPaymentMethod("Thanh toán khi nhận hàng")}
           >
-            <Text style={{ color: colors.text }}>Thanh toán khi nhận hàng</Text>
+            <Icon name="cash" size={20} color={colors.primary} />
+            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>Thanh toán khi nhận hàng</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.stepContainer}>
-          <Text style={[styles.label, { color: colors.text }]}>Xem lại đơn hàng:</Text>
-          <Text style={{ color: colors.text }}>Tên tài khoản: {user.name}</Text>
-          <Text style={{ color: colors.text }}>Số điện thoại: {user.phoneNumber}</Text>
-          <Text style={{ color: colors.text }}>Địa chỉ: {address}</Text>
-          <Text style={{ color: colors.text }}>Phương thức vận chuyển: {shippingMethod}</Text>
-          <Text style={{ color: colors.text }}>Phương thức thanh toán: {paymentMethod}</Text>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
-            onPress={handlePlaceOrder}
-          >
-            <Text style={[styles.buttonText, { color: colors.textSrd }]}>Đặt hàng</Text>
-          </TouchableOpacity>
+          <Text style={[styles.label, { color: colors.text }]}>Chi tiết thanh toán:</Text>
+          <View style={styles.detailRow}>
+            <Text style={[styles.detailText, { color: colors.text }]}>Tổng tiền hàng:</Text>
+            <Text style={[styles.detailAmount, { color: colors.text }]}>{totalCost ? totalCost.toLocaleString() : "N/A"} VND</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={[styles.detailText, { color: colors.text }]}>Tổng tiền phí vận chuyển:</Text>
+            <Text style={[styles.detailAmount, { color: colors.text }]}>{shippingCost.toLocaleString()} VND</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={[styles.detailText, { color: colors.text }]}>Tổng thanh toán:</Text>
+            <Text style={[styles.detailAmount, { color: colors.text, fontWeight: "bold" }]}>{(totalCost + shippingCost).toLocaleString()} VND</Text>
+          </View>
         </View>
       </ScrollView>
+      <View style={[styles.totalContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.totalLabel, { color: colors.text }]}>Tổng số tiền:</Text>
+        <Text style={[styles.totalAmount, { color: colors.primary }]}>{totalCost ? (totalCost + shippingCost).toLocaleString() : "N/A"} VND</Text>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: colors.primary }]}
+          onPress={handlePlaceOrder}
+        >
+          <Text style={[styles.buttonText, { color: colors.textSrd }]}>Đặt hàng</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -208,8 +229,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 10,
+    textAlign: "left",
+    fontWeight: "bold",
+    width: "100%",
   },
   input: {
     width: "100%",
@@ -257,18 +281,14 @@ const styles = StyleSheet.create({
   totalContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    alignItems: "center",
+    padding: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
   },
   totalLabel: {
     fontSize: 18,
+    fontWeight: "bold",
   },
   totalAmount: {
     fontSize: 18,
@@ -283,8 +303,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: "center",
-    width: "100%",
-    marginBottom: 10,
+    marginLeft: 10,
   },
   buttonText: {
     fontSize: 16,
@@ -297,9 +316,30 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: "100%",
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   selectedOption: {
     borderColor: "#0A51B0",
+    backgroundColor: "#e0f7fa",
+  },
+  optionText: {
+    marginLeft: 10,
+    textAlign: "left",
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    padding: 5,
+  },
+  detailText: {
+    textAlign: "left",
+    width: "50%",
+  },
+  detailAmount: {
+    textAlign: "right",
+    width: "50%",
   },
 });
 
