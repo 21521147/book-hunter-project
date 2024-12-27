@@ -22,7 +22,7 @@ const CartScreen = ({ navigation }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { fetchCartItemsCount } = useContext(CartContext);
 
   const fetchCartItems = async () => {

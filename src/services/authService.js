@@ -28,7 +28,7 @@ const authService = {
         password
       );
       const user = userCredential.user;
-      await sendEmailVerification(user);
+      // await sendEmailVerification(user);
 
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
