@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
+import { CartContext } from "../../contexts/CartContext";
 import orderService from "../../services/orderService";
 import DeliveredOrderBox from "../../components/order/DeliveredOrderBox";
 import Loading from "../../components/Loading";
 
 const Canceled = ({ navigation }) => {
   const { user } = useContext(UserContext);
+  const { fetchStatusCount } = useContext(CartContext);
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +24,7 @@ const Canceled = ({ navigation }) => {
       try {
         const fetchedOrders = await orderService.getOrdersByStatus(
           user.id,
-          "delivered"
+          "Đã huỷ"
         );
         setOrders(fetchedOrders);
       } catch (error) {
@@ -34,7 +37,7 @@ const Canceled = ({ navigation }) => {
 
   useEffect(() => {
     fetchOrders();
-  }, [user]);
+  }, [fetchStatusCount()]);
 
   if (loading) {
     return <Loading />;

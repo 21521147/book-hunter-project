@@ -2,29 +2,33 @@ import React, { useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import orderService from "../../services/orderService";
 import { UserContext } from "../../contexts/UserContext";
+import { CartContext } from "../../contexts/CartContext";
 
 const OrderBox = ({ order, onUpdate }) => {
   const { user } = useContext(UserContext);
+  const { fetchStatusCount } = useContext(CartContext);
 
   const handleDelivered = async () => {
     try {
-      await orderService.updateOrderStatus(user.id, order.id, "delivered");
-      Alert.alert("Success", "Order marked as delivered.");
+      await orderService.updateOrderStatus(user.id, order.id, "Đã nhận");
+      Alert.alert("Thành công", "Đơn hàng đã xác nhận là đã nhận.");
       onUpdate();
+      fetchStatusCount();
     } catch (error) {
       console.error("Error updating order status:", error);
-      Alert.alert("Error", "Failed to update order status.");
+      Alert.alert("Lỗi", "Cập nhật trạng thái đơn hàng thất bại.");
     }
   };
 
   const handleCancel = async () => {
     try {
-      await orderService.updateOrderStatus(user.id, order.id, "canceled");
-      Alert.alert("Success", "Order canceled.");
+      await orderService.updateOrderStatus(user.id, order.id, "Đã huỷ");
+      Alert.alert("Thành công", "Đơn hàng đã xác nhận là đã huỷ.");
       onUpdate();
+      fetchStatusCount();
     } catch (error) {
       console.error("Error updating order status:", error);
-      Alert.alert("Error", "Failed to update order status.");
+      Alert.alert("Lỗi", "Cập nhật trạng thái đơn hàng thất bại.");
     }
   };
 
@@ -38,10 +42,10 @@ const OrderBox = ({ order, onUpdate }) => {
       <Text style={styles.text}>Total: {order.price.toLocaleString()} VND</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleDelivered}>
-          <Text style={styles.buttonText}>Delivered</Text>
+          <Text style={styles.buttonText}>Đã nhận hàng</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleCancel}>
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.buttonText}>Huỷ đơn hàng</Text>
         </TouchableOpacity>
       </View>
     </View>

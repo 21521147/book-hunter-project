@@ -13,6 +13,29 @@ import {
 const ORDERS_COLLECTION = "orders";
 const CARTS_COLLECTION = "carts";
 
+const placeOneOrder = async (userId, order) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      throw new Error("User not found");
+    }
+
+    const ordersCollectionRef = collection(userRef, ORDERS_COLLECTION);
+    const orderDocRef = await addDoc(ordersCollectionRef, order);
+
+    return {
+      success: true,
+      message: "Order placed successfully!",
+      orderId: orderDocRef.id,
+    };
+  } catch (error) {
+    console.error("Error placing order:", error);
+    return { success: false, message: "Failed to place order." };
+  }
+};
+
 const placeOrder = async (userId, order) => {
   try {
     const userRef = doc(db, "users", userId);
@@ -79,10 +102,25 @@ const updateOrderStatus = async (userId, orderId, status) => {
   }
 };
 
+const countOrdersByStatus = async (userId, status) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const ordersCollectionRef = collection(userRef, ORDERS_COLLECTION);
+    const querySnapshot = await getDocs(ordersCollectionRef);
+    const orders = querySnapshot.docs.map((doc) => doc.data());
+    return orders.filter((order) => order.status === status).length;
+  } catch (error) {
+    console.error("Error counting orders:", error);
+    throw new Error("Failed to count orders.");
+  }
+}
+
 const orderService = {
   placeOrder,
+  placeOneOrder,
   getOrdersByStatus,
   updateOrderStatus,
+  countOrdersByStatus,
 };
 
 export default orderService;

@@ -201,7 +201,7 @@ const ItemDetails = () => {
       return;
     }
     // Navigate to checkout screen with the current book
-    navigation.navigate("CheckoutScreen", { bookId: book.id, quantity });
+    navigation.navigate("CheckoutFBScreen", { bookId: book.id, quantity: quantity, price: book.price, totalCost: book.price * quantity });
   };
 
   if (loading) {

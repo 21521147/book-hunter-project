@@ -19,23 +19,29 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import orderService from "../services/orderService";
 import cartService from "../services/cartService";
 
-const CheckoutScreen = ({ navigation, route }) => {
+const CheckoutFBScreen = ({ navigation, route }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
-  const { cartItems, totalCost } = route.params;
-  const { fetchCartItemsCount } = useContext(CartContext);
+  const { bookId, quantity, totalCost } = route.params;
 
   const [address, setAddress] = useState(user.address || "");
   const [shippingMethod, setShippingMethod] = useState("Tiêu chuẩn");
   const [paymentMethod, setPaymentMethod] = useState("Thẻ tín dụng");
-  const [books, setBooks] = useState([]);
+  const [book, setBook] = useState({});
   const [shippingCost, setShippingCost] = useState(30000);
 
   useEffect(() => {
-    const fetchBookDetails = async () => {   };
+    const fetchBookDetails = async () => {
+      try {
+        const fetchedBook = await bookService.getBookById(bookId);
+        setBook(fetchedBook);
+      } catch (error) {
+        console.error("Error fetching book details:", error);
+      }
+    };
 
     fetchBookDetails();
-  }, [cartItems]);
+  }, [bookId]);
 
   useEffect(() => {
     if (shippingMethod === "Tiêu chuẩn") {
@@ -59,11 +65,10 @@ const CheckoutScreen = ({ navigation, route }) => {
         address: address,
         shippingMethod: shippingMethod,
         paymentMethod: paymentMethod,
+        carts: [{ id: bookId, quantity }],
       };
 
-      await orderService.placeOrder(user.id, order);
-      await cartService.clearCart(user.id);
-      fetchCartItemsCount();
+      await orderService.placeOneOrder(user.id, order);
 
       Alert.alert("Thành Công", "Đặt hàng thành công!");
       navigation.goBack();
@@ -75,23 +80,38 @@ const CheckoutScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: colors.background }]}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color={colors.primary} />
           </TouchableOpacity>
-          <Text style={[styles.headerText, { color: colors.text, fontSize: fontSizes.large }]}>
+          <Text
+            style={[
+              styles.headerText,
+              { color: colors.text, fontSize: fontSizes.large },
+            ]}
+          >
             Thanh Toán
           </Text>
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
             <Icon name="location" size={20} color={colors.primary} />
-            <Text style={[styles.infoText, { color: colors.text }]}>{user.name}</Text>
-            <Text style={[styles.medium, { color: colors.text }]}> (+84) {user.phoneNumber}</Text>
+            <Text style={[styles.infoText, { color: colors.text }]}>
+              {user.name}
+            </Text>
+            <Text style={[styles.medium, { color: colors.text }]}>
+              {" "}
+              (+84) {user.phoneNumber}
+            </Text>
           </View>
           <TextInput
-            style={[styles.input, { color: colors.text, borderColor: colors.border }]}
+            style={[
+              styles.input,
+              { color: colors.text, borderColor: colors.border },
+            ]}
             placeholder="Nhập địa chỉ của bạn"
             placeholderTextColor={colors.secondary}
             value={address}
@@ -99,84 +119,165 @@ const CheckoutScreen = ({ navigation, route }) => {
             multiline
           />
         </View>
-
-          <View style={styles.booksContainer}>
-            {cartItems.map((book, index) => (
-              <View key={index} style={styles.bookContainer}>
-                <Image source={{ uri: book.images[0] }} style={styles.bookImage} />
-                <View style={styles.bookInfo}>
-                  <Text style={[styles.bookTitle, { color: colors.text }]}>{book.name}</Text>
-                  <Text style={[styles.bookAuthor, { color: colors.text }]}>Tác giả: {book.authors.join(", ")}</Text>
-                  <Text style={[styles.bookPrice, { color: colors.primary }]}>Giá: {book.price ? book.price.toLocaleString() : "N/A"} VND</Text>
-                  <Text style={[styles.bookPrice, { color: colors.primary }]}>Số lượng: {book.quantity}</Text>
-                </View>
-              </View>
-            ))}
+        <View style={styles.booksContainer}>
+          <Image
+            source={{ uri: book.images ? book.images[0] : "" }}
+            style={styles.bookImage}
+          />
+          <View style={styles.bookInfo}>
+            <Text style={[styles.bookTitle, { color: colors.text }]}>
+              {book.name}
+            </Text>
+            <Text style={[styles.bookAuthor, { color: colors.text }]}>
+              Tác giả: {book.authors ? book.authors.join(", ") : ""}
+            </Text>
+            <Text style={[styles.bookPrice, { color: colors.primary }]}>
+              Giá: {book.price ? book.price.toLocaleString() : "N/A"} VND
+            </Text>
+            <Text style={[styles.bookPrice, { color: colors.primary }]}>
+              Số lượng: {quantity}
+            </Text>
           </View>
-
+        </View>
         <View style={styles.stepContainer}>
-          <Text style={[styles.label, { color: colors.text, textAlign: "left" }]}>Phương thức vận chuyển:</Text>
+          <Text
+            style={[styles.label, { color: colors.text, textAlign: "left" }]}
+          >
+            Phương thức vận chuyển:
+          </Text>
           <TouchableOpacity
-            style={[styles.option, shippingMethod === "Tiêu chuẩn" && styles.selectedOption, { borderColor: "green" }]}
+            style={[
+              styles.option,
+              shippingMethod === "Tiêu chuẩn" && styles.selectedOption,
+              { borderColor: "green" },
+            ]}
             onPress={() => setShippingMethod("Tiêu chuẩn")}
           >
             <MaterialCommunityIcons name="motorbike" size={24} color="green" />
-            <Text style={[styles.optionText, { color: "green", textAlign: "left" }]}>Tiêu chuẩn (30,000 VND)</Text>
+            <Text
+              style={[styles.optionText, { color: "green", textAlign: "left" }]}
+            >
+              Tiêu chuẩn (30,000 VND)
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.option, shippingMethod === "Nhanh" && styles.selectedOption, { borderColor: "orange" }]}
+            style={[
+              styles.option,
+              shippingMethod === "Nhanh" && styles.selectedOption,
+              { borderColor: "orange" },
+            ]}
             onPress={() => setShippingMethod("Nhanh")}
           >
             <Icon name="rocket" size={20} color="orange" />
-            <Text style={[styles.optionText, { color: "orange", textAlign: "left" }]}>Nhanh (50,000 VND)</Text>
+            <Text
+              style={[
+                styles.optionText,
+                { color: "orange", textAlign: "left" },
+              ]}
+            >
+              Nhanh (50,000 VND)
+            </Text>
           </TouchableOpacity>
-          <Text style={[styles.label, { color: colors.text, textAlign: "left" }]}>Phương thức thanh toán:</Text>
+          <Text
+            style={[styles.label, { color: colors.text, textAlign: "left" }]}
+          >
+            Phương thức thanh toán:
+          </Text>
           <TouchableOpacity
-            style={[styles.option, paymentMethod === "Thẻ tín dụng" && styles.selectedOption]}
+            style={[
+              styles.option,
+              paymentMethod === "Thẻ tín dụng" && styles.selectedOption,
+            ]}
             onPress={() => setPaymentMethod("Thẻ tín dụng")}
           >
             <Icon name="card" size={20} color={colors.primary} />
-            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>Thẻ tín dụng</Text>
+            <Text
+              style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}
+            >
+              Thẻ tín dụng
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.option, paymentMethod === "PayPal" && styles.selectedOption]}
+            style={[
+              styles.option,
+              paymentMethod === "PayPal" && styles.selectedOption,
+            ]}
             onPress={() => setPaymentMethod("PayPal")}
           >
             <Icon name="logo-paypal" size={20} color={colors.primary} />
-            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>PayPal</Text>
+            <Text
+              style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}
+            >
+              PayPal
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.option, paymentMethod === "Thanh toán khi nhận hàng" && styles.selectedOption]}
+            style={[
+              styles.option,
+              paymentMethod === "Thanh toán khi nhận hàng" &&
+                styles.selectedOption,
+            ]}
             onPress={() => setPaymentMethod("Thanh toán khi nhận hàng")}
           >
             <Icon name="cash" size={20} color={colors.primary} />
-            <Text style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}>Thanh toán khi nhận hàng</Text>
+            <Text
+              style={{ color: colors.text, marginLeft: 10, textAlign: "left" }}
+            >
+              Thanh toán khi nhận hàng
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.stepContainer}>
-          <Text style={[styles.label, { color: colors.text }]}>Chi tiết thanh toán:</Text>
+          <Text style={[styles.label, { color: colors.text }]}>
+            Chi tiết thanh toán:
+          </Text>
           <View style={styles.detailRow}>
-            <Text style={[styles.detailText, { color: colors.text }]}>Tổng tiền hàng:</Text>
-            <Text style={[styles.detailAmount, { color: colors.text }]}>{totalCost ? totalCost.toLocaleString() : "N/A"} VND</Text>
+            <Text style={[styles.detailText, { color: colors.text }]}>
+              Tổng tiền hàng:
+            </Text>
+            <Text style={[styles.detailAmount, { color: colors.text }]}>
+              {totalCost ? totalCost.toLocaleString() : "N/A"} VND
+            </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={[styles.detailText, { color: colors.text }]}>Tổng tiền phí vận chuyển:</Text>
-            <Text style={[styles.detailAmount, { color: colors.text }]}>{shippingCost.toLocaleString()} VND</Text>
+            <Text style={[styles.detailText, { color: colors.text }]}>
+              Tổng tiền phí vận chuyển:
+            </Text>
+            <Text style={[styles.detailAmount, { color: colors.text }]}>
+              {shippingCost.toLocaleString()} VND
+            </Text>
           </View>
           <View style={styles.detailRow}>
-            <Text style={[styles.detailText, { color: colors.text }]}>Tổng thanh toán:</Text>
-            <Text style={[styles.detailAmount, { color: colors.text, fontWeight: "bold" }]}>{(totalCost + shippingCost).toLocaleString()} VND</Text>
+            <Text style={[styles.detailText, { color: colors.text }]}>
+              Tổng thanh toán:
+            </Text>
+            <Text
+              style={[
+                styles.detailAmount,
+                { color: colors.text, fontWeight: "bold" },
+              ]}
+            >
+              {(totalCost + shippingCost).toLocaleString()} VND
+            </Text>
           </View>
         </View>
       </ScrollView>
-      <View style={[styles.totalContainer, { backgroundColor: colors.background }]}>
-        <Text style={[styles.totalLabel, { color: colors.text }]}>Tổng số tiền:</Text>
-        <Text style={[styles.totalAmount, { color: colors.primary }]}>{totalCost ? (totalCost + shippingCost).toLocaleString() : "N/A"} VND</Text>
+      <View
+        style={[styles.totalContainer, { backgroundColor: colors.background }]}
+      >
+        <Text style={[styles.totalLabel, { color: colors.text }]}>
+          Tổng số tiền:
+        </Text>
+        <Text style={[styles.totalAmount, { color: colors.primary }]}>
+          {totalCost ? (totalCost + shippingCost).toLocaleString() : "N/A"} VND
+        </Text>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={handlePlaceOrder}
         >
-          <Text style={[styles.buttonText, { color: colors.textSrd }]}>Đặt hàng</Text>
+          <Text style={[styles.buttonText, { color: colors.textSrd }]}>
+            Đặt hàng
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -239,6 +340,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   booksContainer: {
+    flexDirection: "row",
     marginBottom: 20,
   },
   bookContainer: {
@@ -340,5 +442,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CheckoutScreen;
-
+export default CheckoutFBScreen;

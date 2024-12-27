@@ -7,19 +7,25 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { UserContext } from "../../contexts/UserContext";
+import { CartContext } from "../../contexts/CartContext";
 import orderService from "../../services/orderService";
 import DeliveredOrderBox from "../../components/order/DeliveredOrderBox";
 import Loading from "../../components/Loading";
 
 const Delivered = ({ navigation }) => {
   const { user } = useContext(UserContext);
+  const { fetchStatusCount } = useContext(CartContext);
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
     if (user) {
       try {
-        const fetchedOrders = await orderService.getOrdersByStatus(user.id, "delivered");
+        const fetchedOrders = await orderService.getOrdersByStatus(
+          user.id,
+          "Đã nhận"
+        );
         setOrders(fetchedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -31,7 +37,7 @@ const Delivered = ({ navigation }) => {
 
   useEffect(() => {
     fetchOrders();
-  }, [user]);
+  }, [fetchStatusCount()]);
 
   if (loading) {
     return <Loading />;

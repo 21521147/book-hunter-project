@@ -19,7 +19,7 @@ const Delivering = ({ navigation }) => {
   const fetchOrders = async () => {
     if (user) {
       try {
-        const fetchedOrders = await orderService.getOrdersByStatus(user.id, "delivering");
+        const fetchedOrders = await orderService.getOrdersByStatus(user.id, "Đang giao hàng");
         setOrders(fetchedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);

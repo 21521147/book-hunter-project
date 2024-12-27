@@ -255,7 +255,7 @@ const CartScreen = ({ navigation }) => {
                     styles.buttonContainer,
                     { backgroundColor: colors.primary },
                   ]}
-                  onPress={ () => navigation.navigate("CheckoutScreen", { totalCost })}
+                  onPress={ () => navigation.navigate("CheckoutScreen", { cartItems, totalCost })}
                 >
                   <Text style={styles.buttonText}>Thanh Toán</Text>
                 </TouchableOpacity>

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import cartService from "../services/cartService";
+import orderService from "../services/orderService";
 import { UserContext } from "./UserContext";
 
 export const CartContext = createContext();
@@ -8,6 +9,7 @@ const CartContextProvider = ({ children }) => {
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [statusCount, setStatusCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const fetchCartItemsCount = async () => {
@@ -25,7 +27,19 @@ const CartContextProvider = ({ children }) => {
     }
   };
 
+  const fetchStatusCount = async () => {
+    if (user) {
+      try {
+        const count = await orderService.countOrdersByStatus(user.id, "Đã nhận");
+        setStatusCount(count);
+      } catch (error) {
+        console.error("Error fetching order status count: ", error);
+      }
+    }
+  }
+
   useEffect(() => {
+    fetchCartItemsCount();
     fetchCartItemsCount();
   }, [user]);
 
@@ -71,6 +85,7 @@ const CartContextProvider = ({ children }) => {
         removeFromCart,
         updateCartItemQuantity,
         fetchCartItemsCount,
+        fetchStatusCount,
         loading,
       }}
     >
