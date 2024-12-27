@@ -78,14 +78,13 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    marginTop: 5,
     alignItems: "center",
     justifyContent: "center",
     borderBottomWidth: 1,
     marginBottom: 10,
   },
   headerText: {
-    fontWeight: "900",
+    fontWeight: "800",
   },
   section: {},
 });

@@ -29,7 +29,7 @@ const ItemDetails = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [buttonText, setButtonText] = useState("Add to Cart");
+  const [buttonText, setButtonText] = useState("Thêm vào giỏ hàng");
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const [modalVisible, setModalVisible] = useState(false);
@@ -58,9 +58,10 @@ const ItemDetails = () => {
           if (cartItems.length > 0) {
             const bookIdsInCart = cartItems.map((item) => item.id);
             if (bookIdsInCart.includes(bookId)) {
-              setButtonText("Added to Cart");
+              setButtonText("Đã thêm vào giỏ hàng");
             }
           }
+          setCartItemCount(cartItems.length);
         }
 
         if (
@@ -111,7 +112,8 @@ const ItemDetails = () => {
       const result = await cartService.addToCart(cartItem, user.id);
       if (result.success) {
         fetchCartItemsCount();
-        setButtonText("Added to Cart");
+        setButtonText("Đã thêm vào giỏ hàng");
+        setCartItemCount(cartItemCount + 1);
         Alert.alert("Success", result.message);
       } else {
         Alert.alert("Error", result.message);
@@ -180,6 +182,30 @@ const ItemDetails = () => {
     setModalVisible(true);
   };
 
+  const handleBuyNow = () => {
+    if (!user) {
+      Alert.alert(
+        "Bạn chưa đăng nhập",
+        "Bạn cần đăng nhập để mua sách.",
+        [
+          {
+            text: "Đăng nhập",
+            onPress: () =>
+              navigation.navigate("BottomMain", { screen: "Profile" }),
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+        ],
+        { cancelable: false }
+      );
+      return;
+    }
+    // Navigate to checkout screen with the current book
+    navigation.navigate("CheckoutScreen", { bookId: book.id, quantity });
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -199,11 +225,21 @@ const ItemDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }} // Add padding to avoid footer overlap
       >
-        <View style={[styles.header, { backgroundColor: colors.background }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" size={24} color={colors.primary} />
-          </TouchableOpacity>
+        <View style={[styles.header, {backgroundColor: colors.background}]}>
+          <View style={styles.headerLeft}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon name="arrow-back" size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={toggleFavorite} style={styles.saveButton}>
+              <Icon
+                name="bookmark"
+                size={35}
+                color={isFavorite ? colors.primary : colors.secondary}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.headerIcons}>
             <TouchableOpacity
               onPress={() =>
@@ -225,6 +261,11 @@ const ItemDetails = () => {
               }
             >
               <Icon name="cart" size={24} color={colors.primary} />
+              {cartItemCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{cartItemCount}</Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -243,7 +284,7 @@ const ItemDetails = () => {
           <Text
             style={[
               styles.author,
-              { fontSize: fontSizes.medium, color: colors.secondary },
+              { fontSize: fontSizes.medium, color: 'black' },
             ]}
           >
             Tác giả: {book.authors.join(", ")}
@@ -251,7 +292,7 @@ const ItemDetails = () => {
           <Text
             style={[
               styles.price,
-              { fontSize: fontSizes.medium, color: colors.secondary },
+              { fontSize: fontSizes.medium, color: 'red' },
             ]}
           >
             Giá: {book.price.toLocaleString()} VND
@@ -271,30 +312,22 @@ const ItemDetails = () => {
               : `${book.description.substring(0, 500)}...`}
           </Text>
           {book.description.length > 100 && (
-            <TouchableOpacity
-              onPress={() => setShowFullDescription(!showFullDescription)}
-            >
-              <Text style={{ color: colors.primary, marginTop: 5 }}>
+            <TouchableOpacity onPress={() => setShowFullDescription(!showFullDescription)}>
+              <Text style={{ color: colors.primary, marginTop: 5, textAlign: "left" }}>
                 {showFullDescription ? "Thu gọn" : "Xem thêm"}
+                <Icon
+                  name={showFullDescription ? "chevron-up" : "chevron-down"}
+                  size={14}
+                  color={colors.primary}
+                />
               </Text>
             </TouchableOpacity>
           )}
         </View>
       </ScrollView>
-      <View style={[styles.footer, { backgroundColor: colors.background }]}>
-        <TouchableOpacity onPress={toggleFavorite} style={styles.heartButton}>
-          <Icon
-            name="heart"
-            size={35}
-            color={isFavorite ? "red" : colors.secondary}
-          />
-        </TouchableOpacity>
-        <View
-          style={[
-            styles.quantityContainer,
-            { backgroundColor: colors.background },
-          ]}
-        >
+
+      <View style={[styles.footer, {backgroundColor: colors.background, position: 'absolute', bottom: 0, width: '100%'}]}>
+        <View style={[styles.quantityContainer, {backgroundColor: colors.background}]}>
           <TouchableOpacity
             onPress={decrementQuantity}
             style={[
@@ -317,23 +350,38 @@ const ItemDetails = () => {
             <Icon name="add" size={20} color={colors.primary} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[
-            styles.addToCartButton,
-            {
-              backgroundColor:
-                buttonText === "Added to Cart"
-                  ? colors.secondary
-                  : colors.primary,
-            },
-          ]}
-          onPress={addToCart}
-          disabled={buttonText === "Added to Cart"}
-        >
-          <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
-            {buttonText}
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.addToCartButton,
+              {
+                backgroundColor:
+                  buttonText === "Đã thêm vào giỏ hàng"
+                    ? colors.secondary
+                    : colors.primary,
+                height: 50,
+              },
+            ]}
+            onPress={addToCart}
+            disabled={buttonText === "Đã thêm vào giỏ hàng"}
+          >
+            <Icon name="cart" size={20} color={colors.textSrd} />
+            <Text
+              style={[styles.addToCartButtonText, { color: colors.textSrd }]}
+              numberOfLines={2}
+            >
+              {buttonText}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buyNowButton, { backgroundColor: 'red', height: 50 }]}
+            onPress={handleBuyNow}
+          >
+            <Text style={[styles.buyNowButtonText, { color: colors.textSrd }]}>
+              Mua ngay
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       {selectedImage && (
         <Modal
@@ -371,10 +419,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   headerIcons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: 100,
+  },
+  badge: {
+    position: "absolute",
+    right: -6,
+    top: -3,
+    backgroundColor: "red",
+    borderRadius: 6,
+    width: 14,
+    height: 14,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  badgeText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
   },
   content: {
     padding: 20,
@@ -397,7 +465,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     overflow: "hidden",
-    width: 150,
+    width: 100,
   },
   quantityButton: {
     padding: 10,
@@ -409,15 +477,38 @@ const styles = StyleSheet.create({
     textAlign: "center",
     flex: 1,
   },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   addToCartButton: {
     marginLeft: 10,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
+    width: 120,
+    flexDirection: "column",
+    justifyContent: "center",
   },
   addToCartButtonText: {
-    fontSize: 18,
+    fontSize: 10,
+    textAlign: "center",
+    marginTop: 5,
+  },
+  buyNowButton: {
+    marginLeft: 5,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: 120,
+    height: 50,
+    justifyContent: "center",
+  },
+  buyNowButtonText: {
+    fontSize: 16,
+    textAlign:"center",
     fontWeight: "bold",
+    textAlignVertical: "center",
   },
   footer: {
     flexDirection: "row",
@@ -426,6 +517,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#ccc",
+    marginBottom: 5
   },
   modalContainer: {
     flex: 1,
@@ -449,7 +541,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
   },
-  heartButton: {
+  saveButton: {
+    marginLeft: 10,
     padding: 5,
   },
 });
