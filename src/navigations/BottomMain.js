@@ -12,7 +12,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
-const BottomMain = () => {
+const BottomMain = ({ navigation }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -27,6 +27,19 @@ const BottomMain = () => {
 
     fetchCartItems();
   }, [user]);
+
+  useEffect(() => {
+    const updateCartItemCount = async () => {
+      if (user) {
+        const userInfo = await cartService.getCartItems(user.cart);
+        setCartItemCount(userInfo.length);
+      }
+    };
+
+    const unsubscribe = navigation.addListener('focus', updateCartItemCount);
+
+    return unsubscribe;
+  }, [navigation, user]);
 
   return (
     <Tab.Navigator
