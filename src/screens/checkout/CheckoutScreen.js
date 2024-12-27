@@ -8,12 +8,12 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { ThemeContext } from "../contexts/ThemeContext";
-import { UserContext } from "../contexts/UserContext";
-import { CartContext } from "../contexts/CartContext";
+import { ThemeContext } from "../../contexts/ThemeContext";
+import { UserContext } from "../../contexts/UserContext";
+import { CartContext } from "../../contexts/CartContext";
 import Icon from "react-native-vector-icons/Ionicons";
-import orderService from "../services/orderService";
-import cartService from "../services/cartService";
+import orderService from "../../services/orderService";
+import cartService from "../../services/cartService";
 
 const CheckoutScreen = ({ navigation, route }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
@@ -51,7 +51,7 @@ const CheckoutScreen = ({ navigation, route }) => {
       fetchCartItemsCount();
 
       Alert.alert("Thành Công", "Đặt hàng thành công!");
-      navigation.goBack();
+      navigation.navigate("CheckoutScreens");
     } catch (error) {
       console.error("Error placing order:", error);
       Alert.alert("Lỗi", "Đặt hàng thất bại!");

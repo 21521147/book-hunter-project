@@ -7,7 +7,7 @@ import EventScreen from "../screens/another/EventScreen";
 import ItemDetails from "../screens/another/ItemDetails";
 import FavoriteScreen from "../screens/another/FavoriteScreen";
 import TopTab from "./TopTab";
-import CheckoutScreen from "../screens/CheckoutScreen";
+import CheckoutScreen from "../screens/checkout/CheckoutScreen";
 import OrderDetails from "../screens/another/OrderDetails";
 
 const Stack = createStackNavigator();
