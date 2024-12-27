@@ -49,6 +49,7 @@ const BottomMain = ({ navigation }) => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
+          tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" color={color} size={size} />
           ),
@@ -59,6 +60,7 @@ const BottomMain = ({ navigation }) => {
         name="SearchScreen"
         component={SearchScreen}
         options={{
+          tabBarLabel: "Tìm kiếm",
           tabBarIcon: ({ color, size }) => (
             <Icon name="search" color={color} size={size} />
           ),
@@ -69,6 +71,7 @@ const BottomMain = ({ navigation }) => {
         name="CartScreen"
         component={CartScreen}
         options={{
+          tabBarLabel: "Giỏ hàng",
           tabBarIcon: ({ color, size }) => (
             <View>
               <Icon name="shopping-cart" color={color} size={size} />
@@ -86,6 +89,7 @@ const BottomMain = ({ navigation }) => {
         name="AuthStack"
         component={AuthStack}
         options={{
+          tabBarLabel: "Tài khoản",
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Icon name="user" color={color} size={size} />
