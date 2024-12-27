@@ -125,7 +125,7 @@ const ProfileScreen = ({ navigation, route }) => {
 
         <View style={styles.iconBoxContainer}>
           <IconBox
-            icon="heart-outline"
+            icon="bookmark-outline"
             text="Sản phẩm yêu thích"
             targetScreen="FavoriteScreen"
           />
