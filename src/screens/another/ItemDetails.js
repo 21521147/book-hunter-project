@@ -241,21 +241,21 @@ const ItemDetails = () => {
           <View style={styles.headerIcons}>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("BottomMain", { screen: "Search" })
+                navigation.navigate("BottomMain", { screen: "SearchScreen" })
               }
             >
               <Icon name="search" size={24} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("BottomMain", { screen: "Home" })
+                navigation.navigate("BottomMain", { screen: "HomeScreen" })
               }
             >
               <Icon name="home" size={24} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("BottomMain", { screen: "Cart" })
+                navigation.navigate("BottomMain", { screen: "CartScreen" })
               }
             >
               <Icon name="cart" size={24} color={colors.primary} />

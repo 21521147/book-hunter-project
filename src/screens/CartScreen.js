@@ -140,7 +140,7 @@ const CartScreen = ({ navigation }) => {
       {user ? (
         <>
           <View style={[styles.header, { backgroundColor: colors.background }]}>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
               <Icon name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
             <Text style={[styles.headerText, { color: colors.text }]}>
@@ -159,7 +159,7 @@ const CartScreen = ({ navigation }) => {
               </Text>
               <TouchableOpacity
                 style={styles.shopButton}
-                onPress={() => navigation.navigate("Home")}
+                onPress={() => navigation.navigate("HomeScreen")}
               >
                 <Text style={[styles.shopButtonText, { color: "#fff" }]}>
                   Mua sắm ngay
@@ -255,9 +255,7 @@ const CartScreen = ({ navigation }) => {
                     styles.buttonContainer,
                     { backgroundColor: colors.primary },
                   ]}
-                  onPress={() =>
-                    Alert.alert("Checkout", "Thanh toán thành công!")
-                  }
+                  onPress={ () => navigation.navigate("CheckoutScreen", { totalCost })}
                 >
                   <Text style={styles.buttonText}>Thanh Toán</Text>
                 </TouchableOpacity>
@@ -273,7 +271,7 @@ const CartScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.shopButton}
             onPress={() =>
-              navigation.navigate("BottomMain", { screen: "Profile" })
+              navigation.navigate("BottomMain", { screen: "AuthStack" })
             }
           >
             <Text style={[styles.shopButtonText, { color: "#fff" }]}>

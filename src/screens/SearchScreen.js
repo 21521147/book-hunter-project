@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import bookService from "../services/bookService";
 import BookBox from "../components/BookBox";
 import { ThemeContext } from "../contexts/ThemeContext";
+import Loading from "../components/Loading";
 
 const SearchScreen = ({ navigation }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
@@ -112,6 +113,12 @@ const SearchScreen = ({ navigation }) => {
       console.log(result.uri);
     }
   };
+
+  if (loading) {
+    return (
+      <Loading />
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>

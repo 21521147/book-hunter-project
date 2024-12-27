@@ -10,15 +10,22 @@ import {
 } from "react-native";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
+import { CartContext } from "../contexts/CartContext";
 import Icon from "react-native-vector-icons/Ionicons";
+import orderService from "../services/orderService";
+import cartService from "../services/cartService";
 
-const CheckoutScreen = ({ navigation }) => {
+const CheckoutScreen = ({ navigation, route }) => {
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
+  const { totalCost } = route.params;
+  const { fetchCartItemsCount } = useContext(CartContext);
+
   const [step, setStep] = useState(1);
   const [address, setAddress] = useState(user.address || "");
   const [shippingMethod, setShippingMethod] = useState("Standard");
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
+
 
   const handleNextStep = () => {
     if (step === 1 && !address) {
@@ -28,9 +35,27 @@ const CheckoutScreen = ({ navigation }) => {
     setStep(step + 1);
   };
 
-  const handlePlaceOrder = () => {
-    Alert.alert("Success", "Your order has been placed!");
-    navigation.navigate("Home");
+  const handlePlaceOrder = async () => {
+    try {
+      const order = {
+        date: new Date().toISOString(),
+        status: "delivering",
+        price: totalCost,
+        address: address,
+        shippingMethod: shippingMethod,
+        paymentMethod: paymentMethod,
+      };
+
+      await orderService.placeOrder(user.id, order);
+      await cartService.clearCart(user.id);
+      fetchCartItemsCount();
+
+      Alert.alert("Thành Công", "Đặt hàng thành công!");
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error placing order:", error);
+      Alert.alert("Lỗi", "Đặt hàng thất bại!");
+    }
   };
 
   return (

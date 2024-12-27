@@ -46,7 +46,7 @@ const BottomMain = ({ navigation }) => {
       }}
     >
       <Tab.Screen
-        name="Trang chủ"
+        name="HomeScreen"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -56,7 +56,7 @@ const BottomMain = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Tìm kiếm"
+        name="SearchScreen"
         component={SearchScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -66,7 +66,7 @@ const BottomMain = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Giỏ hàng"
+        name="CartScreen"
         component={CartScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -83,7 +83,7 @@ const BottomMain = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Tài khoản"
+        name="AuthStack"
         component={AuthStack}
         options={{
           headerShown: false,

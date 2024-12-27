@@ -8,6 +8,7 @@ import ItemDetails from "../screens/another/ItemDetails";
 import FavoriteScreen from "../screens/another/FavoriteScreen";
 import TopTab from "./TopTab";
 import CheckoutScreen from "../screens/CheckoutScreen";
+import OrderDetails from "../screens/another/OrderDetails";
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,11 @@ const StackNav = () => {
         name="CheckoutScreen"
         component={CheckoutScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="OrderDetails"
+        component={OrderDetails}
+        options={{ headerShown: true }}
       />
     </Stack.Navigator>
   );

@@ -111,11 +111,28 @@ const updateCartItemQuantity = async (itemId, userId, change) => {
   }
 };
 
+const clearCart = async (userId) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const cartCollectionRef = collection(userRef, CART_COLLECTION);
+    const cartSnapshot = await getDocs(cartCollectionRef);
+
+    const deletePromises = cartSnapshot.docs.map((doc) => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+
+    return { success: true, message: "Cart cleared successfully!" };
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    return { success: false, message: "Failed to clear cart." };
+  }
+};
+
 const cartService = {
   getCartItems,
   addToCart,
   removeFromCart,
   updateCartItemQuantity,
+  clearCart,
 };
 
 export default cartService;
