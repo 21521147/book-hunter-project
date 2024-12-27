@@ -4,16 +4,23 @@ import { ThemeContext } from "../contexts/ThemeContext";
 import Icon from "react-native-vector-icons/Ionicons";
 import bookService from "../services/bookService";
 
-const BookBox = ({ item, navigation }) => {
+const FlashSaleBox = ({ item, navigation }) => {
   const { colors } = useContext(ThemeContext);
   const [ratingAverage, setRatingAverage] = useState(0);
+  const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
     const fetchRatingAverage = async () => {
       const bookDetails = await bookService.getBookById(item.id);
-      // const randomRating = (Math.random() * (4.9 - 3.5) + 3.5).toFixed(1);
       setRatingAverage(bookDetails.rating_average);
     };
+
+    const fetchDiscount = async () => {
+      discoutRandom = Math.floor(Math.random() * (50 - 20 + 1) + 20);
+      setDiscount(discoutRandom);
+    };
+
+    fetchDiscount();
 
     fetchRatingAverage();
   }, [item.id]);
@@ -40,6 +47,12 @@ const BookBox = ({ item, navigation }) => {
         </Text>
         <View style={styles.priceContainer}>
           <Text style={[styles.price, { color: colors.primary }]}>
+            {((item.price * (100 - discount)) / 100).toLocaleString()} VND
+          </Text>
+          <Text style={[styles.price, { color: colors.primary }]}>
+            {discount}% OFF
+          </Text>
+          <Text style={[styles.price, { color: colors.secondary, textDecorationLine: 'line-through' }]}>
             {item.price.toLocaleString()} VND
           </Text>
         </View>
@@ -52,8 +65,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center",
-    width: 170,
-    height: 230,
+    width: 200,
+    height: 300,
     padding: 10,
     marginHorizontal: 5,
     marginBottom: 10,
@@ -108,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BookBox;
+export default FlashSaleBox;

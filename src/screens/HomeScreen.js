@@ -11,6 +11,8 @@ import Slider from "../components/Slider";
 import GenreSlider from "../components/GenreSlider";
 import FlatlistByGenre from "../components/book/FlatlistByGenre";
 import FlatlistByRatingAvg from "../components/book/FlatlistByRatingAvg";
+import FlalistByReviewCount from "../components/book/FlalistByReviewCount";
+import FlashSaleFlatlist from "../components/book/FlashSaleFlatlist";
 import { ThemeContext } from "../contexts/ThemeContext";
 
 const HomeScreen = ({ navigation }) => {
@@ -52,8 +54,8 @@ const HomeScreen = ({ navigation }) => {
             />
           </View>
 
-          <View style={styles.section}>
-            <FlatlistByRatingAvg navigation={navigation} />
+          <View style={styles.flashSaleSection}>
+            <FlashSaleFlatlist navigation={navigation} />
           </View>
 
           <View style={styles.section}>
@@ -61,7 +63,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.section}>
-            <FlatlistByRatingAvg navigation={navigation} />
+            <FlalistByReviewCount navigation={navigation} />
           </View>
         </ScrollView>
       </View>
@@ -86,7 +88,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: "800",
   },
-  section: {},
+  section: {
+  },
+  flashSaleSection: {
+    backgroundColor: 'red',
+    marginVertical: 10,
+  },
 });
 
 export default HomeScreen;

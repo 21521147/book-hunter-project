@@ -192,6 +192,21 @@ const bookService = {
       throw error;
     }
   },
+
+  getTop10BooksByReviewCount: async () => {
+    try {
+      const q = query(booksCollection, orderBy("review_count", "desc"), limit(10));
+      const querySnapshot = await getDocs(q);
+      const books = [];
+      querySnapshot.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+      });
+      return books;
+    } catch (error) {
+      console.error("Error fetching top 10 books by review count: ", error);
+      throw error;
+    }
+  },
 };
 
 export default bookService;
