@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
+import { View, FlatList, StyleSheet, Text, SafeAreaView, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BookBox from "../../components/BookBox";
 import bookService from "../../services/bookService";
 import Loading from "../../components/Loading";
 import { ThemeContext } from "../../contexts/ThemeContext";
+import Icon from "react-native-vector-icons/Ionicons";
 
 const SeeAllScreen = ({ route, navigation }) => {
   const { selectedGenre, type } = route.params;
@@ -41,22 +42,38 @@ const SeeAllScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.primary }]}>
-        {selectedGenre ? selectedGenre : type === "rating_average" ? "Đánh giá cao nhất" : "Được đọc nhiều nhất"}
-      </Text>
-      <FlatList
-        data={books}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        contentContainerStyle={styles.list}
-      />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color={colors.primary} />
+        </TouchableOpacity>
+        <Text style={[styles.title, { color: colors.primary }]}>
+          {selectedGenre ? `Thể loại: ${selectedGenre}` : "Sách"}
+        </Text>
+      </View>
+      <View style={styles.container}>
+        <FlatList
+          data={books}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.list}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFF",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -64,7 +81,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginLeft: 10,
   },
   list: {
     justifyContent: "center",
