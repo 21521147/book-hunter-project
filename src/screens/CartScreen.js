@@ -175,12 +175,13 @@ const CartScreen = ({ navigation }) => {
                 ]}
               >
                 {cartItems.map((item) => (
-                  <View
+                  <TouchableOpacity
                     style={[
                       styles.itemContainer,
                       { backgroundColor: colors.background },
                     ]}
                     key={item.id}
+                    onPress={() => navigation.navigate("ItemDetails", { bookId: item.id })}
                   >
                     <Image
                       source={{ uri: item.images[0] }}
@@ -232,7 +233,7 @@ const CartScreen = ({ navigation }) => {
                     >
                       <Icon name="trash" size={24} color={colors.primary} />
                     </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </ScrollView>
               <View
