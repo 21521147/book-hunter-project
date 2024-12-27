@@ -12,6 +12,15 @@ const SearchScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
   const [popularSearches, setPopularSearches] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sortOption, setSortOption] = useState("priceHighToLow");
+  const [filters, setFilters] = useState({
+    publisher: "",
+    brand: "",
+    priceRange: [0, 1000000],
+    genre: "",
+  });
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSortOptions, setShowSortOptions] = useState(false);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -29,6 +38,7 @@ const SearchScreen = ({ navigation }) => {
           book.authors.some(author => author.toLowerCase().includes(query.toLowerCase()))
         );
         setResults(filteredBooks);
+        setShowFilters(true);
       } catch (error) {
         console.error("Error searching books: ", error);
       } finally {
@@ -51,6 +61,43 @@ const SearchScreen = ({ navigation }) => {
 
     fetchPopularSearches();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, sortOption]);
+
+  const applyFilters = () => {
+    let filtered = results.filter((book) => {
+      const matchesPublisher = filters.publisher
+        ? book.publisher.includes(filters.publisher)
+        : true;
+      const matchesBrand = filters.brand
+        ? book.brand.includes(filters.brand)
+        : true;
+      const matchesPrice =
+        book.price >= filters.priceRange[0] &&
+        book.price <= filters.priceRange[1];
+      const matchesGenre = filters.genre
+        ? book.genre.includes(filters.genre)
+        : true;
+
+      return (
+        matchesPublisher && matchesBrand && matchesPrice && matchesGenre
+      );
+    });
+
+    if (sortOption === "priceHighToLow") {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOption === "priceLowToHigh") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOption === "nameAZ") {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === "nameZA") {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    setResults(filtered);
+  };
 
   const handleImageSearch = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -87,6 +134,45 @@ const SearchScreen = ({ navigation }) => {
             <Icon name="search" size={20} color={colors.primary} style={styles.searchIcon} />
           </View>
         </View>
+        {showFilters && (
+          <View style={styles.filterContainer}>
+            <TouchableOpacity
+              style={styles.filterButton}
+              onPress={() => setShowSortOptions(!showSortOptions)}
+            >
+              <Icon name="filter" size={20} color={colors.primary} />
+              <Text style={{ color: colors.text, marginLeft: 5 }}>Sắp xếp</Text>
+            </TouchableOpacity>
+            {showSortOptions && (
+              <View style={styles.sortOptions}>
+                <TouchableOpacity
+                  style={styles.sortOption}
+                  onPress={() => setSortOption("nameAZ")}
+                >
+                  <Text style={{ color: colors.text }}>A-Z</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sortOption}
+                  onPress={() => setSortOption("nameZA")}
+                >
+                  <Text style={{ color: colors.text }}>Z-A</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sortOption}
+                  onPress={() => setSortOption("priceHighToLow")}
+                >
+                  <Text style={{ color: colors.text }}>Giá cao - thấp</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sortOption}
+                  onPress={() => setSortOption("priceLowToHigh")}
+                >
+                  <Text style={{ color: colors.text }}>Giá thấp - cao</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
@@ -195,6 +281,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: 10,
+  },
+  filterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 5,
+  },
+  sortOptions: {
+    position: "absolute",
+    top: 40,
+    right: 0,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderRadius: 5,
+    zIndex: 1,
+  },
+  sortOption: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });
 

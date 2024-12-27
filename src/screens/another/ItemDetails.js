@@ -258,6 +258,13 @@ const ItemDetails = () => {
               <Text style={{ color: colors.primary, marginTop: 5 }}>
                 {showFullDescription ? "Thu gọn" : "Xem thêm"}
               </Text>
+              {!showFullDescription && (
+                <View style={styles.fadeEffect}>
+                  <Text style={{ color: colors.text, opacity: 0.5 }}>
+                    {book.description.substring(500, 520)}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -422,6 +429,14 @@ const styles = StyleSheet.create({
   },
   heartButton: {
     padding: 5,
+  },
+  fadeEffect: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
 });
 
