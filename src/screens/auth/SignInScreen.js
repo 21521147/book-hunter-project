@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Modal,
   Alert,
   SafeAreaView,
 } from "react-native";
@@ -12,25 +13,31 @@ import InputBox from "../../components/InputBox";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import authService from "../../services/authService";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Loading from "../../components/Loading";
 
 const SignInScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { colors, fontSizes } = useContext(ThemeContext);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
+    setLoading(true);
     setError("");
 
     if (!email || !password) {
+      setLoading(false);
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
     try {
       const user = await authService.login(email, password);
+      setLoading(false);
       Alert.alert("Thành công", "Đăng nhập thành công!");
     } catch (error) {
+      setLoading(false);
       console.log("Đăng nhập thất bại:", error.code, error.message);
 
       let errorMessage = "Đã có lỗi xảy ra. Vui lòng thử lại!";
@@ -145,6 +152,19 @@ const SignInScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={loading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <Loading />
+          </View>
+        </View>
+      </Modal>  
     </SafeAreaView>
   );
 };
@@ -193,5 +213,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginLeft: 10,
     fontWeight: "bold",
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "#FFFFFF",
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -21,7 +21,7 @@ const FlatListByGenre = ({ selectedGenre, navigation }) => {
           setBooks(JSON.parse(cachedBooks));
           setLoading(false);
         } else {
-          const books = await bookService.getBooksByGenre(selectedGenre);
+          const books = await bookService.getTop10BooksByGenre(selectedGenre);
           setBooks(books);
           await AsyncStorage.setItem(
             `top10_books_${selectedGenre}`,

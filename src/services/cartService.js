@@ -12,6 +12,8 @@ import {
 
 const CART_COLLECTION = "carts";
 
+
+
 const getCartItems = async (cartIds) => {
   try {
     const cartItems = [];
