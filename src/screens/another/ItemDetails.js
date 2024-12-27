@@ -61,7 +61,6 @@ const ItemDetails = () => {
               setButtonText("Đã thêm vào giỏ hàng");
             }
           }
-          setCartItemCount(cartItems.length);
         }
 
         if (
@@ -113,7 +112,6 @@ const ItemDetails = () => {
       if (result.success) {
         fetchCartItemsCount();
         setButtonText("Đã thêm vào giỏ hàng");
-        setCartItemCount(cartItemCount + 1);
         Alert.alert("Success", result.message);
       } else {
         Alert.alert("Error", result.message);
