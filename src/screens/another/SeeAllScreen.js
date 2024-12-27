@@ -43,7 +43,7 @@ const SeeAllScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={[styles.title, { color: colors.primary }]}>
-        {selectedGenre ? `Genre: ${selectedGenre}` : "Books"}
+        {selectedGenre ? selectedGenre : type === "rating_average" ? "Đánh giá cao nhất" : "Được đọc nhiều nhất"}
       </Text>
       <FlatList
         data={books}

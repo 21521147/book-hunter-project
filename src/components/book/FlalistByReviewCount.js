@@ -9,7 +9,7 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 const FlalistByReviewCount = ({ navigation }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { colors } = useContext(ThemeContext);
+  const { colors, fontSizes } = useContext(ThemeContext);
 
   useEffect(() => {
     const fetchTopReviewedBooks = async () => {
@@ -47,9 +47,29 @@ const FlalistByReviewCount = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.primary }]}>
-        Được đọc nhiều
-      </Text>
+      <View style={[styles.header]}>
+        <Text
+          style={[
+            styles.title,
+            { color: colors.primary, fontSize: fontSizes.large },
+          ]}
+        >
+          Được đọc nhiều nhất
+        </Text>
+        <Text
+          onPress={() =>
+            navigation.navigate("SeeAllScreen", {
+              type: 'rating_average',
+            })
+          }
+          style={[
+            styles.title,
+            { color: colors.primary, fontSize: fontSizes.medium },
+          ]}
+        >
+          Xem tất cả
+        </Text>
+      </View>
       <FlatList
         data={books}
         renderItem={renderItem}
@@ -66,11 +86,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
   title: {
-    fontSize: 20,
     fontWeight: "bold",
     marginLeft: 10,
-    marginBottom: 10,
   },
   list: {
     padding: 10,
