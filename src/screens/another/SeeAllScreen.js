@@ -12,6 +12,8 @@ const SeeAllScreen = ({ route, navigation }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const { colors } = useContext(ThemeContext);
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const [sortOption, setSortOption] = useState("nameAZ");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -37,6 +39,21 @@ const SeeAllScreen = ({ route, navigation }) => {
     <BookBox item={item} navigation={navigation} />
   );
 
+  const sortedBooks = [...books].sort((a, b) => {
+    if (sortOption === "nameAZ") {
+      return a.name.localeCompare(b.name);
+    } else if (sortOption === "nameZA") {
+      return b.name.localeCompare(a.name);
+    } else if (sortOption === "priceLowToHigh") {
+      return a.price - b.price;
+    } else if (sortOption === "priceHighToLow") {
+      return b.price - a.price;
+    } else if (sortOption === "ratingHighToLow") {
+      return b.rating_average - a.rating_average;
+    }
+    return 0;
+  });
+
   if (loading) {
     return <Loading />;
   }
@@ -50,10 +67,47 @@ const SeeAllScreen = ({ route, navigation }) => {
         <Text style={[styles.title, { color: colors.primary }]}>
           {selectedGenre ? `Thể loại: ${selectedGenre}` : "Sách"}
         </Text>
+        <TouchableOpacity onPress={() => setShowSortOptions(!showSortOptions)}>
+          <Icon name="filter" size={24} color={colors.primary} />
+        </TouchableOpacity>
       </View>
+      {showSortOptions && (
+        <View style={styles.sortOptions}>
+          <TouchableOpacity
+            style={styles.sortOption}
+            onPress={() => { setSortOption("nameAZ"); setShowSortOptions(false); }}
+          >
+            <Text style={[styles.sortOptionText, { color: colors.text }]}>Tên: A-Z</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sortOption}
+            onPress={() => { setSortOption("nameZA"); setShowSortOptions(false); }}
+          >
+            <Text style={[styles.sortOptionText, { color: colors.text }]}>Tên: Z-A</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sortOption}
+            onPress={() => { setSortOption("priceHighToLow"); setShowSortOptions(false); }}
+          >
+            <Text style={[styles.sortOptionText, { color: colors.text }]}>Giá cao - thấp</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sortOption}
+            onPress={() => { setSortOption("priceLowToHigh"); setShowSortOptions(false); }}
+          >
+            <Text style={[styles.sortOptionText, { color: colors.text }]}>Giá thấp - cao</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sortOption}
+            onPress={() => { setSortOption("ratingHighToLow"); setShowSortOptions(false); }}
+          >
+            <Text style={[styles.sortOptionText, { color: colors.text }]}>Đánh giá cao - thấp</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={styles.container}>
         <FlatList
-          data={books}
+          data={sortedBooks}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
@@ -82,6 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginLeft: 10,
+    flex: 1,
   },
   list: {
     justifyContent: "center",
@@ -90,6 +145,26 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: "space-between",
     marginBottom: 10,
+  },
+  sortOptions: {
+    backgroundColor: "#FFF",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 100,
+    elevation: 5,
+    alignItems: "flex-end",
+    position: "absolute",
+    borderWidth: 1,
+    right: 10,
+    zIndex: 1,
+  },
+  sortOption: {
+    paddingVertical: 5,
+    alignItems: "flex-start",
+    width: "100%",
+  },
+  sortOptionText: {
+    textAlign: "left",
   },
 });
 
