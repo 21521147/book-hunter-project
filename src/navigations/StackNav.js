@@ -7,6 +7,7 @@ import EventScreen from "../screens/another/EventScreen";
 import ItemDetails from "../screens/another/ItemDetails";
 import FavoriteScreen from "../screens/another/FavoriteScreen";
 import TopTab from "./TopTab";
+import CheckoutScreen from "../screens/CheckoutScreen";
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,11 @@ const StackNav = () => {
         name="CheckoutScreens"
         component={TopTab}
         options={{ headerShown: true }}
+      />
+      <Stack.Screen
+        name="CheckoutScreen"
+        component={CheckoutScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
