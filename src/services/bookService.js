@@ -95,6 +95,21 @@ const bookService = {
     }
   },
 
+  getAllDescBooks: async (type) => {
+    try {
+      const q = query(booksCollection, orderBy(type, "desc"));
+      const querySnapshot = await getDocs(q);
+      const books = [];
+      querySnapshot.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+      });
+      return books;
+    } catch (error) {
+      console.error("Error fetching books by type: ", error);
+      throw error;
+    }
+  },
+  
   getTop10BooksByRatingAvg: async () => {
     try {
       const q = query(

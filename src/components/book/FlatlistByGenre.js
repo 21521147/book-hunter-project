@@ -9,7 +9,7 @@ import { ThemeContext } from "../../contexts/ThemeContext";
 const FlatListByGenre = ({ selectedGenre, navigation }) => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { colors } = useContext(ThemeContext);
+  const { colors, fontSizes } = useContext(ThemeContext);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -48,9 +48,16 @@ const FlatListByGenre = ({ selectedGenre, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.primary }]}>
-        {selectedGenre}
-      </Text>
+      <View style={[styles.header]}>
+        <Text style={[styles.title, { color: colors.primary, fontSize: fontSizes.large }]}>
+          {selectedGenre}
+        </Text>
+        <Text 
+        onPress={() => navigation.navigate("SeeAllScreen", { selectedGenre: selectedGenre })}
+          style={[styles.title, { color: colors.primary, fontSize: fontSizes.medium }]}>
+          Xem tất cả
+        </Text>
+      </View>
       <FlatList
         data={books}
         renderItem={renderItem}
@@ -67,11 +74,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
   title: {
-    fontSize: 20,
     fontWeight: "bold",
     marginLeft: 10,
-    marginBottom: 10,
   },
   list: {
     padding: 10,

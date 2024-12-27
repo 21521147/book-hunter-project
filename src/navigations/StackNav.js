@@ -9,6 +9,7 @@ import FavoriteScreen from "../screens/another/FavoriteScreen";
 import TopTab from "./TopTab";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import OrderDetails from "../screens/another/OrderDetails";
+import SeeAllScreen from "../screens/another/SeeAllScreen";
 
 const Stack = createStackNavigator();
 
@@ -56,6 +57,12 @@ const StackNav = () => {
         component={OrderDetails}
         options={{ headerShown: true }}
       />
+      <Stack.Screen
+        name="SeeAllScreen"
+        component={SeeAllScreen}
+        options={{ headerShown: false }}
+      />
+      
     </Stack.Navigator>
   );
 };
