@@ -23,7 +23,6 @@ const ProfileScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (route.params?.updated) {
-      // Fetch updated user information if available
       updateUser(user.id, {});
     }
   }, [route.params?.updated]);

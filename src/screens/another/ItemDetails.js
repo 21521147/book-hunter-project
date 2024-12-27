@@ -16,6 +16,7 @@ import Loading from "../../components/Loading";
 import ImageSlider from "../../components/ImageSlider";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import { UserContext } from "../../contexts/UserContext";
+import { CartContext } from "../../contexts/CartContext";
 import cartService from "../../services/cartService";
 import Icon from "react-native-vector-icons/Ionicons";
 import authService from "../../services/authService";
@@ -34,6 +35,7 @@ const ItemDetails = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { cartItemCount, fetchCartItemsCount } = useContext(CartContext);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -50,13 +52,17 @@ const ItemDetails = () => {
     const checkIfInCart = async () => {
       try {
         const userInfo = await authService.getUserInfo(user.id);
-        if (userInfo && userInfo.cart) {
-          const cartItems = await cartService.getCartItems(userInfo.cart);
-          const bookIdsInCart = cartItems.map((item) => item.id);
-          if (bookIdsInCart.includes(bookId)) {
-            setButtonText("Added to Cart");
+
+        if (userInfo) {
+          const cartItems = await cartService.getCartItems(user.id);
+          if (cartItems.length > 0) {
+            const bookIdsInCart = cartItems.map((item) => item.id);
+            if (bookIdsInCart.includes(bookId)) {
+              setButtonText("Added to Cart");
+            }
           }
         }
+
         if (
           userInfo &&
           userInfo.savedItems &&
@@ -104,6 +110,7 @@ const ItemDetails = () => {
 
       const result = await cartService.addToCart(cartItem, user.id);
       if (result.success) {
+        fetchCartItemsCount();
         setButtonText("Added to Cart");
         Alert.alert("Success", result.message);
       } else {
@@ -186,12 +193,14 @@ const ItemDetails = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
-        <View style={[styles.header, {backgroundColor: colors.background}]}>
+        <View style={[styles.header, { backgroundColor: colors.background }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color={colors.primary} />
           </TouchableOpacity>
@@ -250,11 +259,21 @@ const ItemDetails = () => {
           <Text style={{ fontSize: fontSizes.medium, color: colors.text }}>
             Mô tả:{" "}
           </Text>
-          <Text style={{ fontSize: fontSizes.medium, color: colors.text, textAlign: "justify" }}>
-            {showFullDescription ? book.description : `${book.description.substring(0, 500)}...`}
+          <Text
+            style={{
+              fontSize: fontSizes.medium,
+              color: colors.text,
+              textAlign: "justify",
+            }}
+          >
+            {showFullDescription
+              ? book.description
+              : `${book.description.substring(0, 500)}...`}
           </Text>
           {book.description.length > 100 && (
-            <TouchableOpacity onPress={() => setShowFullDescription(!showFullDescription)}>
+            <TouchableOpacity
+              onPress={() => setShowFullDescription(!showFullDescription)}
+            >
               <Text style={{ color: colors.primary, marginTop: 5 }}>
                 {showFullDescription ? "Thu gọn" : "Xem thêm"}
               </Text>
@@ -262,7 +281,7 @@ const ItemDetails = () => {
           )}
         </View>
       </ScrollView>
-      <View style={[styles.footer, {backgroundColor: colors.background}]}>
+      <View style={[styles.footer, { backgroundColor: colors.background }]}>
         <TouchableOpacity onPress={toggleFavorite} style={styles.heartButton}>
           <Icon
             name="heart"
@@ -270,17 +289,30 @@ const ItemDetails = () => {
             color={isFavorite ? "red" : colors.secondary}
           />
         </TouchableOpacity>
-        <View style={[styles.quantityContainer, {backgroundColor: colors.background}]}>
+        <View
+          style={[
+            styles.quantityContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <TouchableOpacity
             onPress={decrementQuantity}
-            style={[styles.quantityButton, {backgroundColor: colors.background}]}
+            style={[
+              styles.quantityButton,
+              { backgroundColor: colors.background },
+            ]}
           >
             <Icon name="remove" size={20} color={colors.primary} />
           </TouchableOpacity>
-          <Text style={[styles.quantityText, {color: colors.text}]}>{quantity}</Text>
+          <Text style={[styles.quantityText, { color: colors.text }]}>
+            {quantity}
+          </Text>
           <TouchableOpacity
             onPress={incrementQuantity}
-            style={[styles.quantityButton, {backgroundColor: colors.background}]}
+            style={[
+              styles.quantityButton,
+              { backgroundColor: colors.background },
+            ]}
           >
             <Icon name="add" size={20} color={colors.primary} />
           </TouchableOpacity>
@@ -298,9 +330,7 @@ const ItemDetails = () => {
           onPress={addToCart}
           disabled={buttonText === "Added to Cart"}
         >
-          <Text
-            style={[styles.addToCartButtonText, { color: colors.textSrd }]}
-          >
+          <Text style={[styles.addToCartButtonText, { color: colors.textSrd }]}>
             {buttonText}
           </Text>
         </TouchableOpacity>
@@ -371,7 +401,6 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     padding: 10,
-
   },
   quantityText: {
     fontSize: 16,

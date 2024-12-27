@@ -5,13 +5,16 @@ import {
   StyleSheet,
   Alert,
   Image,
+  Modal,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import authService from "../../services/authService";
 import { ThemeContext } from "../../contexts/ThemeContext";
 import InputBox from "../../components/InputBox";
+import Loading from "../../components/Loading";
 
 const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -78,7 +81,9 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <TouchableOpacity style={styles.icon} onPress={() => navigation.goBack()}>
         <Icon name="arrow-back" size={30} color={colors.primary} />
       </TouchableOpacity>
@@ -179,7 +184,20 @@ const SignUpScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+
+      <Modal
+        transparent={true}
+        animationType="none"
+        visible={loading}
+        onRequestClose={() => {}}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.activityIndicatorWrapper}>
+            <Loading />
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 };
 
@@ -224,5 +242,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginLeft: 10,
     fontWeight: "bold",
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "#FFFFFF",
+    height: 100,
+    width: 100,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

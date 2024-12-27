@@ -13,9 +13,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
+import { CartContext } from "../contexts/CartContext";
 import Loading from "../components/Loading";
 import cartService from "../services/cartService";
-import authService from "../services/authService";
 import bookService from "../services/bookService";
 
 const CartScreen = ({ navigation }) => {
@@ -23,17 +23,18 @@ const CartScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { fetchCartItemsCount } = useContext(CartContext);
 
   const fetchCartItems = async () => {
     setLoading(true);
+    fetchCartItemsCount();
     try {
-      const userInfo = await authService.getUserInfo(user.id);
-      if (userInfo && userInfo.cart) {
-        const items = await cartService.getCartItems(userInfo.cart);
+      if (user) {
+        const items = await cartService.getCartItems(user.id);
         const itemsWithDetails = await Promise.all(
-          items.map(async (item, index) => {
+          items.map(async (item) => {
             const bookDetails = await bookService.getBookById(item.id);
-            return { ...item, ...bookDetails, cartId: userInfo.cart[index] };
+            return { ...item, ...bookDetails };
           })
         );
         setCartItems(itemsWithDetails);
@@ -55,7 +56,7 @@ const CartScreen = ({ navigation }) => {
 
   const updateQuantity = async (itemId, change) => {
     try {
-      const item = cartItems.find((item) => item.cartId === itemId);
+      const item = cartItems.find((item) => item.id === itemId);
       if (item.quantity === 1 && change === -1) {
         Alert.alert(
           "Xác nhận",
@@ -76,7 +77,7 @@ const CartScreen = ({ navigation }) => {
       }
 
       const updatedItems = cartItems.map((item) => {
-        if (item.cartId === itemId) {
+        if (item.id === itemId) {
           const newQuantity = Math.max(1, item.quantity + change);
           return { ...item, quantity: newQuantity };
         }
@@ -84,8 +85,7 @@ const CartScreen = ({ navigation }) => {
       });
       setCartItems(updatedItems);
 
-      // Cập nhật số lượng trong cơ sở dữ liệu (nếu cần)
-      await cartService.updateCartItemQuantity(itemId, change);
+      await cartService.updateCartItemQuantity(itemId, user.id, change);
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
@@ -100,6 +100,7 @@ const CartScreen = ({ navigation }) => {
           prevItems.filter((item) => item.cartId !== itemId)
         );
         Alert.alert("Success", result.message);
+        fetchCartItems()
       } else {
         Alert.alert("Error", result.message);
       }
@@ -133,10 +134,12 @@ const CartScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={[styles.safeArea, {backgroundColor: colors.background}]}>
+    <SafeAreaView
+      style={[styles.safeArea, { backgroundColor: colors.background }]}
+    >
       {user ? (
         <>
-          <View style={[styles.header, {backgroundColor: colors.background}]}>
+          <View style={[styles.header, { backgroundColor: colors.background }]}>
             <TouchableOpacity onPress={() => navigation.navigate("Home")}>
               <Icon name="arrow-back" size={24} color={colors.primary} />
             </TouchableOpacity>
@@ -165,56 +168,95 @@ const CartScreen = ({ navigation }) => {
             </View>
           ) : (
             <>
-              <ScrollView style={[styles.cartContainer, {backgroundColor: colors.background}]}>
+              <ScrollView
+                style={[
+                  styles.cartContainer,
+                  { backgroundColor: colors.background },
+                ]}
+              >
                 {cartItems.map((item) => (
-                  <View style={[styles.itemContainer, {backgroundColor: colors.background}]} key={item.cartId}>
+                  <View
+                    style={[
+                      styles.itemContainer,
+                      { backgroundColor: colors.background },
+                    ]}
+                    key={item.id}
+                  >
                     <Image
                       source={{ uri: item.images[0] }}
                       style={styles.bookImage}
                     />
                     <View style={styles.itemDetails}>
-                      <Text style={[styles.itemText, { color: colors.text, lineHeight: 24 }]}>
+                      <Text
+                        style={[
+                          styles.itemText,
+                          { color: colors.text, lineHeight: 24 },
+                        ]}
+                      >
                         {item.name}
                       </Text>
                       <Text
-                        style={[styles.itemText, { color: colors.primary, lineHeight: 24 }]}
+                        style={[
+                          styles.itemText,
+                          { color: colors.primary, lineHeight: 24 },
+                        ]}
                       >
                         {item.price.toLocaleString()} VND
                       </Text>
                       <View style={styles.quantityContainer}>
                         <TouchableOpacity
                           style={styles.quantityButton}
-                          onPress={() => updateQuantity(item.cartId, -1)}
+                          onPress={() => updateQuantity(item.id, -1)}
                         >
-                          <Icon name="remove" size={20} color={colors.primary} />
+                          <Icon
+                            name="remove"
+                            size={20}
+                            color={colors.primary}
+                          />
                         </TouchableOpacity>
-                        <Text style={[styles.quantityText, {color: colors.text}]}>{item.quantity}</Text>
+                        <Text
+                          style={[styles.quantityText, { color: colors.text }]}
+                        >
+                          {item.quantity}
+                        </Text>
                         <TouchableOpacity
                           style={styles.quantityButton}
-                          onPress={() => updateQuantity(item.cartId, 1)}
+                          onPress={() => updateQuantity(item.id, 1)}
                         >
                           <Icon name="add" size={20} color={colors.primary} />
                         </TouchableOpacity>
                       </View>
                     </View>
                     <TouchableOpacity
-                      onPress={() => confirmRemoveFromCart(item.cartId)}
+                      onPress={() => confirmRemoveFromCart(item.id)}
                     >
                       <Icon name="trash" size={24} color={colors.primary} />
                     </TouchableOpacity>
                   </View>
                 ))}
               </ScrollView>
-              <View style={[styles.totalContainer, {backgroundColor: colors.background}]}>
+              <View
+                style={[
+                  styles.totalContainer,
+                  { backgroundColor: colors.background },
+                ]}
+              >
                 <View>
-                  <Text style={[styles.totalLabel, {color: colors.text}]}>Thành tiền:</Text>
-                  <Text style={[styles.totalAmount, { color: '#FF6600' }]}>
+                  <Text style={[styles.totalLabel, { color: colors.text }]}>
+                    Thành tiền:
+                  </Text>
+                  <Text style={[styles.totalAmount, { color: "#FF6600" }]}>
                     {totalCost.toLocaleString()} VND
                   </Text>
                 </View>
                 <TouchableOpacity
-                  style={[styles.buttonContainer, { backgroundColor: colors.primary }]}
-                  onPress={() => Alert.alert("Checkout", "Thanh toán thành công!")}
+                  style={[
+                    styles.buttonContainer,
+                    { backgroundColor: colors.primary },
+                  ]}
+                  onPress={() =>
+                    Alert.alert("Checkout", "Thanh toán thành công!")
+                  }
                 >
                   <Text style={styles.buttonText}>Thanh Toán</Text>
                 </TouchableOpacity>
@@ -229,7 +271,9 @@ const CartScreen = ({ navigation }) => {
           </Text>
           <TouchableOpacity
             style={styles.shopButton}
-            onPress={() => navigation.navigate("BottomMain", { screen: "Profile" })}
+            onPress={() =>
+              navigation.navigate("BottomMain", { screen: "Profile" })
+            }
           >
             <Text style={[styles.shopButtonText, { color: "#fff" }]}>
               Đăng nhập

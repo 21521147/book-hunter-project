@@ -11,6 +11,15 @@ import { db, auth } from "../api/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const authService = {
+  getCurrentUser() {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      return currentUser;
+    } else {
+      return null;
+    }
+  },
+
   async register(email, password, userName, phoneNumber) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -25,8 +34,6 @@ const authService = {
       await setDoc(userRef, {
         name: userName,
         email: user.email,
-        cart: [],
-        completedOrders: [],
         savedItems: [],
         phoneNumber: phoneNumber,
         address: "Chưa có",

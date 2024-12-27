@@ -6,7 +6,7 @@ import CartScreen from "../screens/CartScreen";
 import AuthStack from "./AuthStack";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
-import cartService from "../services/cartService";
+import { CartContext } from "../contexts/CartContext";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { View, Text, StyleSheet } from "react-native";
 
@@ -15,18 +15,13 @@ const Tab = createBottomTabNavigator();
 const BottomMain = () => {
   const { colors, fontSizes } = useContext(ThemeContext);
   const { user } = useContext(UserContext);
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const { cartItemCount, fetchCartItemsCount } = useContext(CartContext);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      if (user) {
-        const userInfo = await cartService.getCartItems(user.cart);
-        setCartItemCount(userInfo.length);
-      }
-    };
-
-    fetchCartItems();
-  }, [user]);
+    if (user) {
+      fetchCartItemsCount();
+    }
+  }, [user, cartItemCount]);
 
   return (
     <Tab.Navigator
