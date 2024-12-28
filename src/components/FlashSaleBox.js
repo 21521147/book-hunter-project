@@ -16,12 +16,11 @@ const FlashSaleBox = ({ item, navigation }) => {
     };
 
     const fetchDiscount = async () => {
-      discoutRandom = Math.floor(Math.random() * (50 - 20 + 1) + 20);
-      setDiscount(discoutRandom);
+      const discountRandom = Math.floor(Math.random() * (50 - 20 + 1) + 20);
+      setDiscount(discountRandom);
     };
 
     fetchDiscount();
-
     fetchRatingAverage();
   }, [item.id]);
 
@@ -42,17 +41,21 @@ const FlashSaleBox = ({ item, navigation }) => {
       <Image source={{ uri: item.images[0] }} style={styles.image} />
 
       <View style={styles.contentContainer}>
+        <View style={styles.flashSaleContainer}>
+          <Icon name="flash" size={16} color="red" />
+          <Text style={[styles.flashSaleText, { color: "red" }]}>Flash Sale</Text>
+        </View>
         <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
           {item.name}
         </Text>
         <View style={styles.priceContainer}>
-          <Text style={[styles.price, { color: colors.primary }]}>
+          <Text style={[styles.discountedPrice, { color: colors.primary }]}>
             {((item.price * (100 - discount)) / 100).toLocaleString()} VND
           </Text>
-          <Text style={[styles.price, { color: colors.primary }]}>
+          <Text style={[styles.discount, { color: colors.primary }]}>
             {discount}% OFF
           </Text>
-          <Text style={[styles.price, { color: colors.secondary, textDecorationLine: 'line-through' }]}>
+          <Text style={[styles.originalPrice, { color: colors.secondary }]}>
             {item.price.toLocaleString()} VND
           </Text>
         </View>
@@ -106,6 +109,17 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     justifyContent: "center",
+    lineHeight: 24,
+  },
+  flashSaleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  flashSaleText: {
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: "bold",
   },
   title: {
     fontSize: 15,
@@ -116,8 +130,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 5,
   },
-  price: {
+  discountedPrice: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  discount: {
     fontSize: 14,
+    fontWeight: "bold",
+  },
+  originalPrice: {
+    fontSize: 14,
+    textDecorationLine: "line-through",
   },
 });
 
