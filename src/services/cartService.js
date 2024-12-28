@@ -35,7 +35,7 @@ const addToCart = async (item, userId) => {
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
-      throw new Error("User not found");
+      throw new Error("Không tìm thấy người dùng.");
     }
 
     const cartCollectionRef = collection(userRef, CART_COLLECTION);
@@ -43,12 +43,12 @@ const addToCart = async (item, userId) => {
 
     return {
       success: true,
-      message: "Item added to cart!",
+      message: "Thành công thêm vào giỏ hàng!",
       cartId: cartItemRef.id,
     };
   } catch (error) {
     console.error("Error adding item to cart:", error);
-    return { success: false, message: "Failed to add item to cart." };
+    return { success: false, message: "Thêm vào giỏ hàng không thành công." };
   }
 };
 
@@ -64,13 +64,13 @@ const removeFromCart = async (itemId, userId) => {
       const cartItemDoc = querySnapshot.docs[0];
       await deleteDoc(cartItemDoc.ref);
       console.log("Item removed from cart:", itemId);
-      return { success: true, message: "Item removed from cart!" };
+      return { success: true, message: "Xoá sách ra khỏi giỏ thành công!" };
     } else {
-      return { success: false, message: "Item not found in cart." };
+      return { success: false, message: "Không tìm thấy sác trong giỏ" };
     }
   } catch (error) {
     console.error("Error removing item from cart:", error);
-    return { success: false, message: "Failed to remove item from cart." };
+    return { success: false, message: "Xoá sách ra khỏi giỏ thất bại!" };
   }
 };
 
@@ -95,13 +95,13 @@ const updateCartItemQuantity = async (itemId, userId, change) => {
       console.log("Current cart item data:", cartItemData);
 
       if (typeof cartItemData.quantity !== "number") {
-        throw new Error("Invalid quantity value");
+        throw new Error("Số lượng không hợp lệ.");
       }
 
       const newQuantity = Math.max(1, cartItemData.quantity + change);
       await updateDoc(cartItemDoc.ref, { quantity: newQuantity });
       console.log("Updated quantity to:", newQuantity);
-      return { success: true, message: "Quantity updated!" };
+      return { success: true, message: "Cập nhật " };
     } else {
       return { success: false, message: "Item not found in cart." };
     }
@@ -120,7 +120,7 @@ const clearCart = async (userId) => {
     const deletePromises = cartSnapshot.docs.map((doc) => deleteDoc(doc.ref));
     await Promise.all(deletePromises);
 
-    return { success: true, message: "Cart cleared successfully!" };
+    return { success: true, message: "Làm sạch giỏ hàng thành công!" };
   } catch (error) {
     console.error("Error clearing cart:", error);
     return { success: false, message: "Failed to clear cart." };

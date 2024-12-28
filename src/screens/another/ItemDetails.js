@@ -112,13 +112,13 @@ const ItemDetails = () => {
       if (result.success) {
         fetchCartItemsCount();
         setButtonText("Đã thêm vào giỏ hàng");
-        Alert.alert("Success", result.message);
+        Alert.alert("Thành công", result.message);
       } else {
         Alert.alert("Error", result.message);
       }
     } catch (error) {
       console.error("Error adding book to cart:", error);
-      Alert.alert("Error", "Failed to add book to cart.");
+      Alert.alert("Lỗi", "Không thể thêm sách vào giỏ hàng.");
     }
   };
 
