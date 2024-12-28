@@ -124,23 +124,28 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 10,
+    lineHeight: 20,
   },
   priceContainer: {
-    position: "absolute",
-    bottom: 5,
+    marginBottom: 10,
   },
   discountedPrice: {
     fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 5,
+    lineHeight: 20,
   },
   discount: {
     fontSize: 14,
     fontWeight: "bold",
+    marginBottom: 5,
+    lineHeight: 20,
   },
   originalPrice: {
     fontSize: 14,
     textDecorationLine: "line-through",
+    lineHeight: 20,
   },
 });
 
